@@ -84,8 +84,8 @@
 #define UART6_TX_PIN            PC6
 
 #define USE_SOFTSERIAL1
-#define SOFTSERIAL1_RX_PIN      PB0 // PWM5
-#define SOFTSERIAL1_TX_PIN      PB1 // PWM7
+#define SOFTSERIAL1_RX_PIN      PB1 // PWM7
+#define SOFTSERIAL1_TX_PIN      PB0 // PWM5
 
 #define USE_SOFTSERIAL2
 
@@ -146,6 +146,7 @@
 #define SERIALRX_PROVIDER       SERIALRX_SBUS
 #define SERIALRX_UART           SERIAL_PORT_USART6
 #define DEFAULT_FEATURES        (FEATURE_OSD)
+#define USE_GYRO_FAST_KALMAN
 
 // Target IO and timers
 #define USE_SERIAL_4WAY_BLHELI_INTERFACE

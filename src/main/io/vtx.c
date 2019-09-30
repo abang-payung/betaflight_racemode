@@ -31,6 +31,8 @@
 #include "fc/rc_modes.h"
 #include "fc/runtime_config.h"
 
+#include "flight/failsafe.h"
+
 #include "io/vtx.h"
 #include "io/vtx_string.h"
 #include "io/vtx_control.h"
@@ -106,7 +108,7 @@ static vtxSettingsConfig_t vtxGetSettings(void)
     }
 #endif
 
-    if (!ARMING_FLAG(ARMED) && settings.lowPowerDisarm) {
+    if (!ARMING_FLAG(ARMED) && settings.lowPowerDisarm && !failsafeIsActive()) {
         settings.power = VTX_SETTINGS_DEFAULT_POWER;
     }
 
@@ -162,17 +164,27 @@ static bool vtxProcessPower(vtxDevice_t *vtxDevice)
 static bool vtxProcessPitMode(vtxDevice_t *vtxDevice)
 {
     uint8_t pitOnOff;
+
+    bool        currPmSwitchState;
+    static bool prevPmSwitchState = false;
+
     if (!ARMING_FLAG(ARMED) && vtxCommonGetPitMode(vtxDevice, &pitOnOff)) {
-        if (IS_RC_MODE_ACTIVE(BOXVTXPITMODE)) {
+        currPmSwitchState = IS_RC_MODE_ACTIVE(BOXVTXPITMODE);
+
+        if (currPmSwitchState != prevPmSwitchState) {
+            prevPmSwitchState = currPmSwitchState;
+
+            if (currPmSwitchState) {
 #if defined(VTX_SETTINGS_FREQCMD)
-            if (vtxSettingsConfig()->pitModeFreq) {
-                return false;
-            }
+                if (vtxSettingsConfig()->pitModeFreq) {
+                    return false;
+                }
 #endif
-            if (isModeActivationConditionPresent(BOXVTXPITMODE)) {
-                if (!pitOnOff) {
-                    vtxCommonSetPitMode(vtxDevice, true);
-                    return true;
+                if (isModeActivationConditionPresent(BOXVTXPITMODE)) {
+                    if (!pitOnOff) {
+                        vtxCommonSetPitMode(vtxDevice, true);
+                        return true;
+                    }
                 }
             } else {
                 if (pitOnOff) {

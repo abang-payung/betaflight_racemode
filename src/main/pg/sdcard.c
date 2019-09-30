@@ -47,7 +47,7 @@ void pgResetFn_sdcardConfig(sdcardConfig_t *config)
 #else
     config->cardDetectTag = IO_TAG_NONE;
 #endif
-#ifdef SDCARD_DETECT_PIN
+#ifdef SDCARD_SPI_CS_PIN
     config->chipSelectTag = IO_TAG(SDCARD_SPI_CS_PIN);
 #else
     config->chipSelectTag = IO_TAG_NONE;
@@ -65,7 +65,7 @@ void pgResetFn_sdcardConfig(sdcardConfig_t *config)
     config->dmaIdentifier = (uint8_t)dmaGetIdentifier(SDCARD_DMA_CHANNEL_TX);
 #endif
 
-#if (defined(STM32F4) || defined(STM32F7)) && defined(SDCARD_DMA_CHANNEL)
+#if defined(SDCARD_DMA_CHANNEL)
     config->dmaChannel = SDCARD_DMA_CHANNEL;
 #endif
 }

@@ -280,19 +280,23 @@ static void serializeSDCardSummaryReply(sbuf_t *dst)
 static void serializeDataflashSummaryReply(sbuf_t *dst)
 {
 #ifdef USE_FLASHFS
-    const flashGeometry_t *geometry = flashfsGetGeometry();
-    uint8_t flags = (flashfsIsReady() ? 1 : 0) | 2 /* FlashFS is supported */;
-
-    sbufWriteU8(dst, flags);
-    sbufWriteU32(dst, geometry->sectors);
-    sbufWriteU32(dst, geometry->totalSize);
-    sbufWriteU32(dst, flashfsGetOffset()); // Effectively the current number of bytes stored on the volume
-#else
-    sbufWriteU8(dst, 0); // FlashFS is neither ready nor supported
-    sbufWriteU32(dst, 0);
-    sbufWriteU32(dst, 0);
-    sbufWriteU32(dst, 0);
+    if (flashfsGetSize() > 0) {
+        uint8_t flags = (flashfsIsReady() ? 1 : 0) | 2 /* FlashFS is supported */;
+        const flashGeometry_t *geometry = flashfsGetGeometry();
+        sbufWriteU8(dst, flags);
+        sbufWriteU32(dst, geometry->sectors);
+        sbufWriteU32(dst, geometry->totalSize);
+        sbufWriteU32(dst, flashfsGetOffset()); // Effectively the current number of bytes stored on the volume
+    } else
 #endif
+
+    // FlashFS is not configured or valid device is not detected
+    {
+        sbufWriteU8(dst, 0);
+        sbufWriteU32(dst, 0);
+        sbufWriteU32(dst, 0);
+        sbufWriteU32(dst, 0);
+    }    
 }
 
 #ifdef USE_FLASHFS
@@ -496,8 +500,8 @@ static bool mspCommonProcessOutCommand(uint8_t cmdMSP, sbuf_t *dst, mspPostProce
     case MSP_VOLTAGE_METERS: {
         // write out id and voltage meter values, once for each meter we support
         uint8_t count = supportedVoltageMeterCount;
-#ifndef USE_OSD_SLAVE
-        count = supportedVoltageMeterCount - (VOLTAGE_METER_ID_ESC_COUNT - getMotorCount());
+#ifdef USE_ESC_SENSOR
+        count -= VOLTAGE_METER_ID_ESC_COUNT - getMotorCount();
 #endif
 
         for (int i = 0; i < count; i++) {
@@ -515,8 +519,8 @@ static bool mspCommonProcessOutCommand(uint8_t cmdMSP, sbuf_t *dst, mspPostProce
     case MSP_CURRENT_METERS: {
         // write out id and current meter values, once for each meter we support
         uint8_t count = supportedCurrentMeterCount;
-#ifndef USE_OSD_SLAVE
-        count = supportedCurrentMeterCount - (VOLTAGE_METER_ID_ESC_COUNT - getMotorCount());
+#ifdef USE_ESC_SENSOR
+        count -= VOLTAGE_METER_ID_ESC_COUNT - getMotorCount();
 #endif
         for (int i = 0; i < count; i++) {
 
@@ -781,13 +785,13 @@ static bool mspProcessOutCommand(uint8_t cmdMSP, sbuf_t *dst)
             }
 
             for (int i = 0; i < 3; i++) {
-                sbufWriteU16(dst, acc.accADC[i] / scale);
+                sbufWriteU16(dst, lrintf(acc.accADC[i] / scale));
             }
             for (int i = 0; i < 3; i++) {
                 sbufWriteU16(dst, gyroRateDps(i));
             }
             for (int i = 0; i < 3; i++) {
-                sbufWriteU16(dst, mag.magADC[i]);
+                sbufWriteU16(dst, lrintf(mag.magADC[i]));
             }
         }
         break;
@@ -1121,9 +1125,9 @@ static bool mspProcessOutCommand(uint8_t cmdMSP, sbuf_t *dst)
 #ifdef USE_BLACKBOX
         sbufWriteU8(dst, 1); //Blackbox supported
         sbufWriteU8(dst, blackboxConfig()->device);
-        sbufWriteU8(dst, blackboxGetRateNum());
+        sbufWriteU8(dst, 1); // Rate numerator, not used anymore
         sbufWriteU8(dst, blackboxGetRateDenom());
-        sbufWriteU16(dst, blackboxConfig()->p_denom);
+        sbufWriteU16(dst, blackboxConfig()->p_ratio);
 #else
         sbufWriteU8(dst, 0); // Blackbox not supported
         sbufWriteU8(dst, 0);
@@ -1157,13 +1161,8 @@ static bool mspProcessOutCommand(uint8_t cmdMSP, sbuf_t *dst)
         break;
 
     case MSP_ADVANCED_CONFIG:
-        if (gyroConfig()->gyro_lpf) {
-            sbufWriteU8(dst, 8); // If gyro_lpf != OFF then looptime is set to 1000
-            sbufWriteU8(dst, 1);
-        } else {
-            sbufWriteU8(dst, gyroConfig()->gyro_sync_denom);
-            sbufWriteU8(dst, pidConfig()->pid_process_denom);
-        }
+        sbufWriteU8(dst, gyroConfig()->gyro_sync_denom);
+        sbufWriteU8(dst, pidConfig()->pid_process_denom);
         sbufWriteU8(dst, motorConfig()->dev.useUnsyncedPwm);
         sbufWriteU8(dst, motorConfig()->dev.motorPwmProtocol);
         sbufWriteU16(dst, motorConfig()->dev.motorPwmRate);
@@ -1342,7 +1341,21 @@ static mspResult_e mspProcessInCommand(uint8_t cmdMSP, sbuf_t *src)
 {
     UNUSED(cmdMSP);
     UNUSED(src);
-    return MSP_RESULT_ERROR;
+
+    switch(cmdMSP) {
+    case MSP_RESET_CONF:
+        resetEEPROM();
+        readEEPROM();
+        break;
+    case MSP_EEPROM_WRITE:
+        writeEEPROM();
+        readEEPROM();
+        break;
+    default:
+        // we do not know how to handle the (valid) message, indicate error MSP $M!
+        return MSP_RESULT_ERROR;
+    }
+    return MSP_RESULT_ACK;
 }
 
 #else
@@ -1717,11 +1730,11 @@ static mspResult_e mspProcessInCommand(uint8_t cmdMSP, sbuf_t *src)
             const int rateNum = sbufReadU8(src); // was rate_num
             const int rateDenom = sbufReadU8(src); // was rate_denom
             if (sbufBytesRemaining(src) >= 2) {
-                // p_denom specified, so use it directly
-                blackboxConfigMutable()->p_denom = sbufReadU16(src);
+                // p_ratio specified, so use it directly
+                blackboxConfigMutable()->p_ratio = sbufReadU16(src);
             } else {
-                // p_denom not specified in MSP, so calculate it from old rateNum and rateDenom
-                blackboxConfigMutable()->p_denom = blackboxCalculatePDenom(rateNum, rateDenom);
+                // p_ratio not specified in MSP, so calculate it from old rateNum and rateDenom
+                blackboxConfigMutable()->p_ratio = blackboxCalculatePDenom(rateNum, rateDenom);
             }
         }
         break;
@@ -1777,10 +1790,26 @@ static mspResult_e mspProcessInCommand(uint8_t cmdMSP, sbuf_t *src)
     case MSP_SET_ARMING_DISABLED:
         {
             const uint8_t command = sbufReadU8(src);
+            uint8_t disableRunawayTakeoff = 0;
+#ifndef USE_RUNAWAY_TAKEOFF
+            UNUSED(disableRunawayTakeoff);
+#endif
+            if (sbufBytesRemaining(src)) {
+                disableRunawayTakeoff = sbufReadU8(src);
+            }
             if (command) {
                 setArmingDisabled(ARMING_DISABLED_MSP);
+                if (ARMING_FLAG(ARMED)) {
+                    disarm();
+                }
+#ifdef USE_RUNAWAY_TAKEOFF
+                runawayTakeoffTemporaryDisable(false);
+#endif
             } else {
                 unsetArmingDisabled(ARMING_DISABLED_MSP);
+#ifdef USE_RUNAWAY_TAKEOFF
+                runawayTakeoffTemporaryDisable(disableRunawayTakeoff);
+#endif
             }
         }
         break;

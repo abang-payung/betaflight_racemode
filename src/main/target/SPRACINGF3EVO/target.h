@@ -25,6 +25,12 @@
 #define TARGET_BOARD_IDENTIFIER "SPEV"
 #endif
 
+//Making it fit into flash:
+#undef USE_RTC_TIME
+#undef USE_COPY_PROFILE_CMS_MENU
+#undef USE_RX_MSP
+
+
 #if !defined(AIORACERF3)
 #define USE_TARGET_CONFIG
 #endif
@@ -40,8 +46,6 @@
 
 
 #define CONFIG_FASTLOOP_PREFERRED_ACC ACC_DEFAULT
-
-#define USE_BRUSHED_ESC_AUTODETECT
 
 #define LED0_PIN                PB8
 
