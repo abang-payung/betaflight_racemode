@@ -22,7 +22,6 @@
 
 #define TARGET_BOARD_IDENTIFIER "DOGE"
 
-#define CONFIG_FASTLOOP_PREFERRED_ACC ACC_DEFAULT
 
 // tqfp48 pin 34
 #define LED0_PIN                PA13
@@ -128,8 +127,6 @@
 #define ENSURE_MPU_DATA_READY_IS_LOW
 
 #define DEFAULT_RX_FEATURE      FEATURE_RX_PPM
-
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 // !!TODO - check the TARGET_IO_PORTs are correct
 #define TARGET_IO_PORTA         0xffff

@@ -33,7 +33,6 @@
 #define ENABLE_DSHOT_DMAR       true
 #define REMAP_TIM16_DMA
 
-#define CONFIG_FASTLOOP_PREFERRED_ACC ACC_DEFAULT
 
 #define USE_TARGET_CONFIG
 
@@ -105,7 +104,6 @@
 #define SERIALRX_UART           SERIAL_PORT_USART3
 
 #define USE_TRANSPONDER
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 // IO - stm32f303cc in 48pin package
 #define TARGET_IO_PORTA         0xffff

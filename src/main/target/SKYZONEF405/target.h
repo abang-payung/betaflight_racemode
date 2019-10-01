@@ -21,6 +21,7 @@
 #pragma once
 
 #define TARGET_BOARD_IDENTIFIER "SKF4"
+#define TARGET_MANUFACTURER_IDENTIFIER "SKYZ"
 
 #define USBD_PRODUCT_STRING     "skyzone F405"
 
@@ -47,8 +48,16 @@
 
 #define USE_GYRO
 #define USE_ACC
+#define MPU6000_CS_PIN          PA4
+#define MPU6000_SPI_INSTANCE    SPI1
 #define ICM20689_CS_PIN          PA4
 #define ICM20689_SPI_INSTANCE    SPI1
+
+#define USE_GYRO_SPI_MPU6000
+#define GYRO_MPU6000_ALIGN      CW90_DEG
+
+#define USE_ACC_SPI_MPU6000
+#define ACC_MPU6000_ALIGN       CW90_DEG
 
 #define USE_GYRO_SPI_ICM20689
 #define GYRO_ICM20689_ALIGN      CW90_DEG
@@ -138,7 +147,6 @@
 
 #define USE_ESCSERIAL
 #define ESCSERIAL_TIMER_TX_PIN PA3
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 #define TARGET_IO_PORTA         0xffff
 #define TARGET_IO_PORTB         0xffff

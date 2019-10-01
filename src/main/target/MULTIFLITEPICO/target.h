@@ -23,7 +23,6 @@
 #define TARGET_BOARD_IDENTIFIER "MFPB"
 #define USE_TARGET_CONFIG
 
-#define CONFIG_FASTLOOP_PREFERRED_ACC ACC_NONE
 
 #define LED0_PIN                PB3
 
@@ -129,8 +128,6 @@
 #define RX_CHANNELS_TAER
 
 #define BINDPLUG_PIN            PA13
-
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 // IO - stm32f303cc in 48pin package
 #define TARGET_IO_PORTA         0xffff

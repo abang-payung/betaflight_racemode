@@ -31,6 +31,8 @@
 
 #define TEST_SOUND // for factory testing audio output
 
+#define CAMERA_CONTROL_PIN      PA0
+
 #define USE_DUAL_GYRO
 //#define DEBUG_MODE DEBUG_DUAL_GYRO_DIFF
 
@@ -204,8 +206,6 @@
 
 #define USE_PID_AUDIO
 
-#define USE_LED_STRIP
-
 #define USE_TRANSPONDER
 
 #define ENABLE_BLACKBOX_LOGGING_ON_SDCARD_BY_DEFAULT
@@ -220,8 +220,6 @@
 
 #define SPEKTRUM_BIND_PIN       UART2_RX_PIN
 
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
-
 #define USE_BUTTONS
 #define BUTTON_A_PIN            UART5_RX_PIN
 #define BUTTON_A_PIN_INVERTED
@@ -231,7 +229,7 @@
 #define TARGET_IO_PORTC         0xffff
 #define TARGET_IO_PORTD         (BIT(2))
 
-//#define USABLE_TIMER_CHANNEL_COUNT 16 // 4xPWM, 8xESC, 2xESC via UART3 RX/TX, 1xLED Strip, 1xIR.
-#define USABLE_TIMER_CHANNEL_COUNT 16
-#define USED_TIMERS  (TIM_N(1) | TIM_N(2) | TIM_N(3) | TIM_N(4) | TIM_N(8) | TIM_N(9))
+//#define USABLE_TIMER_CHANNEL_COUNT 17 // 4xPWM, 8xESC, 2xESC via UART3 RX/TX, 1xLED Strip, 1xIR, CAM_C
+#define USABLE_TIMER_CHANNEL_COUNT 17
+#define USED_TIMERS  (TIM_N(1) | TIM_N(2) | TIM_N(3) | TIM_N(4) | TIM_N(5) | TIM_N(8) | TIM_N(9))
 

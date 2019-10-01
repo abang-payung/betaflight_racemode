@@ -22,7 +22,6 @@
 
 #define TARGET_BOARD_IDENTIFIER "SPKY" // SParKY
 
-#define CONFIG_FASTLOOP_PREFERRED_ACC ACC_NONE
 
 #define LED0_PIN                PB4  // Blue (Rev 1 & 2) - PB4
 #define LED1_PIN                PB5  // Green (Rev 1) / Red (Rev 2) - PB5
@@ -91,8 +90,6 @@
 #define CURRENT_METER_ADC_PIN   PA7
 
 #define DEFAULT_RX_FEATURE      FEATURE_RX_PPM
-
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 //#define USE_RANGEFINDER
 //#define USE_RANGEFINDER_HCSR04

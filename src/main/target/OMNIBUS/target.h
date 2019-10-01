@@ -26,8 +26,14 @@
 #undef USE_GYRO_OVERFLOW_CHECK
 #undef USE_GYRO_LPF2
 
-#undef USE_ITERM_RELAX
+//#undef USE_ITERM_RELAX
 #undef USE_RC_SMOOTHING_FILTER
+
+#undef USE_LED_STRIP
+
+#undef USE_HUFFMAN
+#undef USE_PINIO
+#undef USE_PINIOBOX
 
 #undef USE_TELEMETRY_HOTT
 #undef USE_TELEMETRY_MAVLINK
@@ -44,7 +50,6 @@
 
 #define TARGET_BOARD_IDENTIFIER "OMNI" // https://en.wikipedia.org/wiki/Omnibus
 
-#define CONFIG_FASTLOOP_PREFERRED_ACC ACC_NONE
 
 #define LED0_PIN                PB3
 
@@ -182,8 +187,6 @@
 //#define BUTTON_B_PIN            PB0
 
 //#define AVOID_UART3_FOR_PWM_PPM // Disable this for using UART3
-
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 #define TARGET_IO_PORTA         0xffff
 #define TARGET_IO_PORTB         0xffff

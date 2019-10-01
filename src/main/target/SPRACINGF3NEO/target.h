@@ -32,7 +32,7 @@
 #undef USE_RC_SMOOTHING_FILTER
 
 //#undef USE_MSP_DISPLAYPORT
-//#undef USE_MSP_OVER_TELEMETRY
+#undef USE_MSP_OVER_TELEMETRY
 
 #undef USE_HUFFMAN
 #undef USE_PINIO
@@ -50,8 +50,6 @@
 #undef USE_RTC_TIME
 #undef USE_RX_MSP
 #undef USE_ESC_SENSOR_INFO
-
-#define CONFIG_FASTLOOP_PREFERRED_ACC ACC_DEFAULT
 
 #define LED0_PIN                PB9
 #define LED1_PIN                PB2
@@ -200,8 +198,6 @@
 
 // FIXME While it's possible to use the button on the OSD/VTX board for binding enabling it here will break binding unless you have the OSD/VTX connected.
 //#define BINDPLUG_PIN                        BUTTON_A_PIN
-
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 // IO - assuming 303 in 64pin package, TODO
 #define TARGET_IO_PORTA 0xffff

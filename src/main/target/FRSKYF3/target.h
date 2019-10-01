@@ -22,7 +22,6 @@
 
 #define TARGET_BOARD_IDENTIFIER "FRF3"
 #define USE_TARGET_CONFIG
-#define CONFIG_FASTLOOP_PREFERRED_ACC ACC_NONE
 
 // Removed to make the firmware fit into flash (in descending order of priority):
 //#undef USE_GYRO_OVERFLOW_CHECK
@@ -31,8 +30,8 @@
 //#undef USE_ITERM_RELAX
 //#undef USE_RC_SMOOTHING_FILTER
 
-//#undef USE_MSP_DISPLAYPORT
-//#undef USE_MSP_OVER_TELEMETRY
+#undef USE_MSP_DISPLAYPORT
+#undef USE_MSP_OVER_TELEMETRY
 
 #undef USE_HUFFMAN
 #undef USE_PINIO
@@ -160,8 +159,6 @@
 #define DEFAULT_RX_FEATURE      FEATURE_RX_SERIAL
 #define SERIALRX_PROVIDER       SERIALRX_SBUS
 #define SERIALRX_UART           SERIAL_PORT_USART2
-
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 #define TARGET_IO_PORTA         0xffff
 #define TARGET_IO_PORTB         0xffff

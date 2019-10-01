@@ -55,7 +55,6 @@
 #include "fc/config.h"
 #include "fc/controlrate_profile.h"
 #include "fc/fc_core.h"
-#include "fc/fc_dispatch.h"
 #include "fc/fc_rc.h"
 #include "fc/rc_adjustments.h"
 #include "fc/rc_controls.h"
@@ -99,6 +98,11 @@ enum {
     ALIGN_MAG = 2
 };
 
+enum {
+    ARMING_DELAYED_DISARMED = 0,
+    ARMING_DELAYED_NORMAL = 1,
+    ARMING_DELAYED_CRASHFLIP = 2
+};
 
 #define GYRO_WATCHDOG_DELAY 80 //  delay for gyro sync
 
@@ -120,20 +124,18 @@ enum {
 #define DEBUG_RUNAWAY_TAKEOFF_FALSE 0
 #endif
 
-#define PARALYZE_PREVENT_MODE_CHANGES_DELAY_US   100000 // Delay after paralyze mode activates to let other mode changes propagate
-
 #if defined(USE_GPS) || defined(USE_MAG)
 int16_t magHold;
 #endif
 
 static bool flipOverAfterCrashMode = false;
 
-static uint32_t disarmAt;     // Time of automatic disarm when "Don't spin the motors when armed" is enabled and auto_disarm_delay is nonzero
+static timeUs_t disarmAt;     // Time of automatic disarm when "Don't spin the motors when armed" is enabled and auto_disarm_delay is nonzero
 
 bool isRXDataNew;
 static int lastArmingDisabledReason = 0;
 static timeUs_t lastDisarmTimeUs;
-static bool tryingToArm;
+static int tryingToArm = ARMING_DELAYED_DISARMED;
 
 #ifdef USE_RUNAWAY_TAKEOFF
 static timeUs_t runawayTakeoffDeactivateUs = 0;
@@ -142,15 +144,6 @@ static bool runawayTakeoffCheckDisabled = false;
 static timeUs_t runawayTakeoffTriggerUs = 0;
 static bool runawayTakeoffTemporarilyDisabled = false;
 #endif
-
-static bool paralyzeModeAllowed = false;
-
-void preventModeChangesDispatch(dispatchEntry_t *self) {
-    UNUSED(self);
-    preventModeChanges();
-}
-
-static dispatchEntry_t preventModeChangesDispatchEntry = { .dispatch = preventModeChangesDispatch};
 
 PG_REGISTER_WITH_RESET_TEMPLATE(throttleCorrectionConfig_t, throttleCorrectionConfig, PG_THROTTLE_CORRECTION_CONFIG, 0);
 
@@ -265,9 +258,8 @@ void updateArmingStatus(void)
         }
 #endif
 
-        if (IS_RC_MODE_ACTIVE(BOXPARALYZE) && paralyzeModeAllowed) {
+        if (IS_RC_MODE_ACTIVE(BOXPARALYZE)) {
             setArmingDisabled(ARMING_DISABLED_PARALYZE);
-            dispatchAdd(&preventModeChangesDispatchEntry, PARALYZE_PREVENT_MODE_CHANGES_DELAY_US);
         }
 
         if (!isUsingSticksForArming()) {
@@ -305,11 +297,6 @@ void updateArmingStatus(void)
         }
 
         warningLedUpdate();
-    }
-
-    // Check if entering into paralyze mode can be allowed regardless of arming status
-    if (!IS_RC_MODE_ACTIVE(BOXPARALYZE) && !paralyzeModeAllowed) {
-        paralyzeModeAllowed = true;
     }
 }
 
@@ -351,13 +338,22 @@ void tryArm(void)
         if (ARMING_FLAG(ARMED)) {
             return;
         }
+
+        const timeUs_t currentTimeUs = micros();
+
 #ifdef USE_DSHOT
-        if (micros() - getLastDshotBeaconCommandTimeUs() < DSHOT_BEACON_GUARD_DELAY_US) {
-            tryingToArm = true;
+        if (currentTimeUs - getLastDshotBeaconCommandTimeUs() < DSHOT_BEACON_GUARD_DELAY_US) {
+            if (tryingToArm == ARMING_DELAYED_DISARMED) {
+                if (isModeActivationConditionPresent(BOXFLIPOVERAFTERCRASH) && IS_RC_MODE_ACTIVE(BOXFLIPOVERAFTERCRASH)) {
+                    tryingToArm = ARMING_DELAYED_CRASHFLIP;
+                } else {
+                    tryingToArm = ARMING_DELAYED_NORMAL;
+                }
+            }
             return;
         }
         if (isMotorProtocolDshot() && isModeActivationConditionPresent(BOXFLIPOVERAFTERCRASH)) {
-            if (!IS_RC_MODE_ACTIVE(BOXFLIPOVERAFTERCRASH)) {
+            if (!(IS_RC_MODE_ACTIVE(BOXFLIPOVERAFTERCRASH) || (tryingToArm == ARMING_DELAYED_CRASHFLIP))) {
                 flipOverAfterCrashMode = false;
                 if (!feature(FEATURE_3D)) {
                     pwmWriteDshotCommand(ALL_MOTORS, getMotorCount(), DSHOT_CMD_SPIN_DIRECTION_NORMAL, false);
@@ -388,7 +384,7 @@ void tryArm(void)
         }
         imuQuaternionHeadfreeOffsetSet();
 
-        disarmAt = millis() + armingConfig()->auto_disarm_delay * 1000;   // start disarm timeout, will be extended when throttle is nonzero
+        disarmAt = currentTimeUs + armingConfig()->auto_disarm_delay * 1e6;   // start disarm timeout, will be extended when throttle is nonzero
 
         lastArmingDisabledReason = 0;
 
@@ -558,7 +554,9 @@ bool isAirmodeActivated()
 bool processRx(timeUs_t currentTimeUs)
 {
     static bool armedBeeperOn = false;
+#ifdef USE_TELEMETRY
     static bool sharedPortTelemetryEnabled = false;
+#endif
 
     if (!calculateRxChannelsAndUpdateFailsafe(currentTimeUs)) {
         return false;
@@ -671,17 +669,17 @@ bool processRx(timeUs_t currentTimeUs)
     // When armed and motors aren't spinning, do beeps and then disarm
     // board after delay so users without buzzer won't lose fingers.
     // mixTable constrains motor commands, so checking  throttleStatus is enough
+    const timeUs_t autoDisarmDelayUs = armingConfig()->auto_disarm_delay * 1e6;
     if (ARMING_FLAG(ARMED)
         && feature(FEATURE_MOTOR_STOP)
         && !STATE(FIXED_WING)
         && !feature(FEATURE_3D)
         && !isAirmodeActive()
+        && !FLIGHT_MODE(GPS_RESCUE_MODE)  // disable auto-disarm when GPS Rescue is active
     ) {
         if (isUsingSticksForArming()) {
             if (throttleStatus == THROTTLE_LOW) {
-                if (armingConfig()->auto_disarm_delay != 0
-                    && (int32_t)(disarmAt - millis()) < 0
-                ) {
+                if ((autoDisarmDelayUs > 0) && (currentTimeUs > disarmAt)) {
                     // auto-disarm configured and delay is over
                     disarm();
                     armedBeeperOn = false;
@@ -691,11 +689,8 @@ bool processRx(timeUs_t currentTimeUs)
                     armedBeeperOn = true;
                 }
             } else {
-                // throttle is not low
-                if (armingConfig()->auto_disarm_delay != 0) {
-                    // extend disarm time
-                    disarmAt = millis() + armingConfig()->auto_disarm_delay * 1000;
-                }
+                // throttle is not low - extend disarm time
+                disarmAt = currentTimeUs + autoDisarmDelayUs;
 
                 if (armedBeeperOn) {
                     beeperSilence();
@@ -712,6 +707,8 @@ bool processRx(timeUs_t currentTimeUs)
                 armedBeeperOn = false;
             }
         }
+    } else {
+        disarmAt = currentTimeUs + autoDisarmDelayUs;  // extend auto-disarm timer
     }
 
     processRcStickPositions();
@@ -853,6 +850,9 @@ bool processRx(timeUs_t currentTimeUs)
         beeper(BEEPER_RC_SMOOTHING_INIT_FAIL);
     }
 #endif
+
+    pidSetAntiGravityState(IS_RC_MODE_ACTIVE(BOXANTIGRAVITY) || feature(FEATURE_ANTI_GRAVITY));
+    
     return true;
 }
 
@@ -1038,10 +1038,10 @@ timeUs_t getLastDisarmTimeUs(void)
 
 bool isTryingToArm()
 {
-    return tryingToArm;
+    return (tryingToArm != ARMING_DELAYED_DISARMED);
 }
 
 void resetTryingToArm()
 {
-    tryingToArm = false;
+    tryingToArm = ARMING_DELAYED_DISARMED;
 }

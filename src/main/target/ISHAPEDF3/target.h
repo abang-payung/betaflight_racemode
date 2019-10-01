@@ -22,7 +22,6 @@
 
 #define TARGET_BOARD_IDENTIFIER "ISF3"
 
-#define CONFIG_FASTLOOP_PREFERRED_ACC ACC_NONE
 
 #define LED0_PIN    PB3
 
@@ -109,8 +108,6 @@
 #define WS2811_TIMER_GPIO_AF            GPIO_AF_6
 
 #define DEFAULT_RX_FEATURE      FEATURE_RX_PPM
-
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 // IO - stm32f303cc in 48pin package
 #define TARGET_IO_PORTA 0xffff

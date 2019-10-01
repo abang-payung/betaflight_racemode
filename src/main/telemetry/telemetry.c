@@ -75,7 +75,8 @@ PG_RESET_TEMPLATE(telemetryConfig_t, telemetryConfig,
             IBUS_SENSOR_TYPE_TEMPERATURE,
             IBUS_SENSOR_TYPE_RPM_FLYSKY,
             IBUS_SENSOR_TYPE_EXTERNAL_VOLTAGE
-    }
+    },
+    .smartport_use_extra_sensors = false,
 );
 
 void telemetryInit(void)
@@ -100,6 +101,9 @@ void telemetryInit(void)
 #endif
 #ifdef USE_TELEMETRY_CRSF
     initCrsfTelemetry();
+#if defined(USE_MSP_OVER_TELEMETRY)
+    initCrsfMspBuffer();
+#endif
 #endif
 #ifdef USE_TELEMETRY_SRXL
     initSrxlTelemetry();
@@ -109,7 +113,6 @@ void telemetryInit(void)
 #endif
 #if defined(USE_MSP_OVER_TELEMETRY)
     initSharedMsp();
-    initCrsfMspBuffer();
 #endif
 
     telemetryCheckState();

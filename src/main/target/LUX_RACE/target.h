@@ -27,13 +27,12 @@
 #endif
 
 // Removed to make the firmware fit into flash (in descending order of priority):
-#undef USE_RTC_TIME
+//#undef USE_RTC_TIME
 #undef USE_RX_MSP
-#undef USE_ESC_SENSOR_INFO
+//#undef USE_ESC_SENSOR_INFO
 
 #define DEFAULT_VOLTAGE_METER_SOURCE VOLTAGE_METER_ADC
 
-#define CONFIG_FASTLOOP_PREFERRED_ACC ACC_DEFAULT
 
 #define LED0_PIN                PC15
 #define LED1_PIN                PC14
@@ -163,8 +162,6 @@
 #else
 #define DEFAULT_FEATURES        (FEATURE_TELEMETRY)
 #endif
-
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 #define USE_ESCSERIAL
 #define ESCSERIAL_TIMER_TX_PIN  PA8  // (HARDARE=0,PPM)

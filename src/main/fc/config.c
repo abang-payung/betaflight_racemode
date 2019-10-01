@@ -25,6 +25,8 @@
 
 #include "platform.h"
 
+#include "blackbox/blackbox.h"
+
 #include "build/debug.h"
 
 #include "config/config_eeprom.h"
@@ -131,8 +133,8 @@ static void activateConfig(void)
     resetAdjustmentStates();
 
     pidInit(currentPidProfile);
-    useRcControlsConfig(currentPidProfile);
-    useAdjustmentConfig(currentPidProfile);
+
+    rcControlsInit();
 
     failsafeReset();
     setAccelerationTrims(&accelerometerConfigMutable()->accZero);
@@ -265,7 +267,17 @@ static void validateAndFixConfig(void)
 
     if (!rcSmoothingIsEnabled() || rxConfig()->rcInterpolationChannels == INTERPOLATION_CHANNELS_T) {
         for (unsigned i = 0; i < MAX_PROFILE_COUNT; i++) {
-            pidProfilesMutable(i)->dtermSetpointWeight = 0;
+            pidProfilesMutable(i)->pid[PID_ROLL].F = 0;
+            pidProfilesMutable(i)->pid[PID_PITCH].F = 0;
+        }
+    }
+
+    if (!rcSmoothingIsEnabled() ||
+        (rxConfig()->rcInterpolationChannels != INTERPOLATION_CHANNELS_RPY &&
+         rxConfig()->rcInterpolationChannels != INTERPOLATION_CHANNELS_RPYT)) {
+
+        for (unsigned i = 0; i < MAX_PROFILE_COUNT; i++) {
+            pidProfilesMutable(i)->pid[PID_YAW].F = 0;
         }
     }
 
@@ -500,13 +512,27 @@ void validateAndFixGyroConfig(void)
             pidConfigMutable()->pid_process_denom = MAX(pidConfigMutable()->pid_process_denom, minPidProcessDenom);
         }
     }
+
+#ifdef USE_BLACKBOX
+#ifndef USE_FLASHFS
+    if (blackboxConfig()->device == 1) {  // BLACKBOX_DEVICE_FLASH (but not defined)
+        blackboxConfigMutable()->device = BLACKBOX_DEVICE_NONE;
+    }
+#endif // USE_FLASHFS
+
+#ifndef USE_SDCARD
+    if (blackboxConfig()->device == 2) {  // BLACKBOX_DEVICE_SDCARD (but not defined)
+        blackboxConfigMutable()->device = BLACKBOX_DEVICE_NONE;
+    }
+#endif // USE_SDCARD
+#endif // USE_BLACKBOX
 }
 #endif // USE_OSD_SLAVE
 
 bool readEEPROM(void)
 {
 #ifndef USE_OSD_SLAVE
-    suspendRxSignal();
+    suspendRxPwmPpmSignal();
 #endif
 
     // Sanity check, read flash
@@ -517,7 +543,7 @@ bool readEEPROM(void)
     activateConfig();
 
 #ifndef USE_OSD_SLAVE
-    resumeRxSignal();
+    resumeRxPwmPpmSignal();
 #endif
 
     return success;
@@ -528,13 +554,13 @@ void writeEEPROM(void)
     validateAndFixConfig();
 
 #ifndef USE_OSD_SLAVE
-    suspendRxSignal();
+    suspendRxPwmPpmSignal();
 #endif
 
     writeConfigToEEPROM();
 
 #ifndef USE_OSD_SLAVE
-    resumeRxSignal();
+    resumeRxPwmPpmSignal();
 #endif
 }
 
@@ -568,6 +594,8 @@ void changePidProfile(uint8_t pidProfileIndex)
     if (pidProfileIndex < MAX_PROFILE_COUNT) {
         systemConfigMutable()->pidProfileIndex = pidProfileIndex;
         loadPidProfile();
+
+        pidInit(currentPidProfile);
     }
 
     beeperConfirmationBeeps(pidProfileIndex + 1);

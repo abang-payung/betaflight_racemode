@@ -49,6 +49,7 @@ extern "C" {
     #include "io/gps.h"
     #include "io/osd.h"
 
+    #include "sensors/acceleration.h"
     #include "sensors/battery.h"
 
     #include "rx/rx.h"
@@ -56,7 +57,7 @@ extern "C" {
     void osdRefresh(timeUs_t currentTimeUs);
     void osdFormatTime(char * buff, osd_timer_precision_e precision, timeUs_t time);
     void osdFormatTimer(char *buff, bool showSymbol, int timerIndex);
-    int osdConvertTemperatureToSelectedUnit(int tempInDeciDegrees);
+    int osdConvertTemperatureToSelectedUnit(int tempInDegreesCelcius);
 
     uint16_t rssi;
     attitudeEulerAngles_t attitude;
@@ -68,6 +69,9 @@ extern "C" {
     int16_t GPS_directionToHome;
     int32_t GPS_coord[2];
     gpsSolutionData_t gpsSol;
+
+    acc_t acc;
+    float accAverage[XYZ_AXIS_COUNT];
 
     PG_REGISTER(batteryConfig_t, batteryConfig, PG_BATTERY_CONFIG, 0);
     PG_REGISTER(blackboxConfig_t, blackboxConfig, PG_BLACKBOX_CONFIG, 0);
@@ -435,6 +439,7 @@ TEST(OsdTest, TestAlarms)
     // given
     // default state is set
     setDefualtSimulationState();
+    sensorsSet(SENSOR_GPS);
 
     // and
     // the following OSD elements are visible
@@ -711,9 +716,18 @@ TEST(OsdTest, TestElementAltitude)
 
     // and
     osdConfigMutable()->units = OSD_UNIT_METRIC;
+    sensorsClear(SENSOR_GPS);
 
     // when
     simulationAltitude = 0;
+    displayClearScreen(&testDisplayPort);
+    osdRefresh(simulationTime);
+
+    // then
+    displayPortTestBufferSubstring(23, 7, "-       ");
+
+    // when
+    sensorsSet(SENSOR_GPS);
     displayClearScreen(&testDisplayPort);
     osdRefresh(simulationTime);
 
@@ -933,11 +947,15 @@ TEST(OsdTest, TestConvertTemperatureUnits)
 {
     /* In Celsius */
     osdConfigMutable()->units = OSD_UNIT_METRIC;
-    EXPECT_EQ(osdConvertTemperatureToSelectedUnit(330), 330);
+    EXPECT_EQ(osdConvertTemperatureToSelectedUnit(40), 40);
 
     /* In Fahrenheit */
     osdConfigMutable()->units = OSD_UNIT_IMPERIAL;
-    EXPECT_EQ(osdConvertTemperatureToSelectedUnit(330), 914);
+    EXPECT_EQ(osdConvertTemperatureToSelectedUnit(40), 104);
+
+    /* In Fahrenheit with rounding */
+    osdConfigMutable()->units = OSD_UNIT_IMPERIAL;
+    EXPECT_EQ(osdConvertTemperatureToSelectedUnit(41), 106);
 }
 
 // STUBS
@@ -1032,5 +1050,5 @@ extern "C" {
         return false;
     }
 
-    float pidItermAccelerator(void) { return 1.0; }
+    bool pidOsdAntiGravityActive(void) { return false; }
 }

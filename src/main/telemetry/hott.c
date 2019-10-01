@@ -62,7 +62,7 @@
 #include "platform.h"
 
 
-#ifdef USE_TELEMETRY
+#ifdef USE_TELEMETRY_HOTT
 
 #include "build/build_config.h"
 #include "build/debug.h"
@@ -208,10 +208,10 @@ void hottPrepareGPSResponse(HOTT_GPS_MSG_t *hottGPSMessage)
 
     uint16_t altitude = gpsSol.llh.alt;
     if (!STATE(GPS_FIX)) {
-        altitude = getEstimatedAltitude() / 100;
+        altitude = getEstimatedAltitude();
     }
 
-    const uint16_t hottGpsAltitude = (altitude) + HOTT_GPS_ALTITUDE_OFFSET; // gpsSol.llh.alt in m ; offset = 500 -> O m
+    const uint16_t hottGpsAltitude = (altitude / 100) + HOTT_GPS_ALTITUDE_OFFSET; // gpsSol.llh.alt in m ; offset = 500 -> O m
 
     hottGPSMessage->altitude_L = hottGpsAltitude & 0x00FF;
     hottGPSMessage->altitude_H = hottGpsAltitude >> 8;
@@ -310,6 +310,11 @@ void freeHoTTTelemetryPort(void)
 void initHoTTTelemetry(void)
 {
     portConfig = findSerialPortConfig(FUNCTION_TELEMETRY_HOTT);
+
+    if (!portConfig) {
+        return;
+    }
+
     hottPortSharing = determinePortSharing(portConfig, FUNCTION_TELEMETRY_HOTT);
 
     initialiseMessages();

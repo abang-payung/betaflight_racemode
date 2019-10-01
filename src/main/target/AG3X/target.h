@@ -38,7 +38,7 @@
 #define LED0_PIN                PC13
 
 #define USE_BEEPER
-#define BEEPER                  NONE
+#define BEEPER_PIN              NONE
 #define BEEPER_INVERTED
 
 #define USE_ACC
@@ -164,8 +164,6 @@
 
 #define DEFAULT_VOLTAGE_METER_SOURCE VOLTAGE_METER_ADC
 #define DEFAULT_CURRENT_METER_SOURCE CURRENT_METER_ESC
-
-#define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 #define TARGET_IO_PORTA (0xffff & ~(BIT(13)|BIT(14)))
 #define TARGET_IO_PORTB (0xffff & ~(BIT(2)))
