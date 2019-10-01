@@ -66,7 +66,7 @@ PG_RESET_TEMPLATE(mixerConfig_t, mixerConfig,
     .yaw_motors_reversed = false,
 );
 
-PG_REGISTER_WITH_RESET_FN(motorConfig_t, motorConfig, PG_MOTOR_CONFIG, 0);
+PG_REGISTER_WITH_RESET_FN(motorConfig_t, motorConfig, PG_MOTOR_CONFIG, 1);
 
 void pgResetFn_motorConfig(motorConfig_t *motorConfig)
 {
@@ -93,6 +93,9 @@ void pgResetFn_motorConfig(motorConfig_t *motorConfig)
     motorConfig->maxthrottle = 2000;
     motorConfig->mincommand = 1000;
     motorConfig->digitalIdleOffsetValue = 450;
+#ifdef USE_DSHOT_DMAR
+    motorConfig->dev.useBurstDshot = ENABLE_DSHOT_DMAR;
+#endif
 
     int motorIndex = 0;
     for (int i = 0; i < USABLE_TIMER_CHANNEL_COUNT && motorIndex < MAX_SUPPORTED_MOTORS; i++) {
@@ -444,18 +447,6 @@ void mixerConfigureOutput(void)
                 currentMixer[i] = mixers[currentMixerMode].motor[i];
         }
     }
-
-    // in 3D mode, mixer gain has to be halved
-    if (feature(FEATURE_3D)) {
-        if (motorCount > 1) {
-            for (int i = 0; i < motorCount; i++) {
-                currentMixer[i].pitch *= 0.5f;
-                currentMixer[i].roll *= 0.5f;
-                currentMixer[i].yaw *= 0.5f;
-            }
-        }
-    }
-
     mixerResetDisarmedMotors();
 }
 
@@ -574,7 +565,7 @@ static void calculateThrottleAndCurrentMotorEndpoints(timeUs_t currentTimeUs)
             throttle = rcCommand[THROTTLE] - rcCommand3dDeadBandHigh;
             currentThrottleInputRange = rcCommandThrottleRange3dHigh;
         } else if ((rcThrottlePrevious <= rcCommand3dDeadBandLow &&
-                !isModeActivationConditionPresent(BOX3DONASWITCH)) ||
+                !flight3DConfigMutable()->switched_mode3d) ||
                 isMotorsReversed()) {
             // INVERTED_TO_DEADBAND
             motorRangeMin = motorOutputLow;

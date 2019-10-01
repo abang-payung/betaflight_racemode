@@ -19,13 +19,13 @@
 
 #define TARGET_BOARD_IDENTIFIER "AFF3" // AlienFlight F3.
 #define USE_TARGET_CONFIG
+#define TARGET_BUS_INIT
 #define REMAP_TIM17_DMA
 
 #define CONFIG_FASTLOOP_PREFERRED_ACC ACC_DEFAULT
 
 #define USE_HARDWARE_REVISION_DETECTION
 #define HW_PIN                  PB2
-#define USE_BRUSHED_ESC_AUTODETECT
 
 // LED's V1
 #define LED0_PIN                PB4

@@ -25,6 +25,9 @@
 
 #include "build/version.h"
 
+#include "cms/cms.h"
+#include "io/displayport_srxl.h"
+
 #include "common/crc.h"
 #include "common/streambuf.h"
 #include "common/utils.h"
@@ -133,10 +136,13 @@ typedef struct
     UINT16 volts; // 0.01V increments
     INT16 temperature; // degrees F
     INT8 dBm_A, // Average signal for A antenna in dBm
-    dBm_B; // Average signal for B antenna in dBm.
+    INT8 dBm_B; // Average signal for B antenna in dBm.
     // If only 1 antenna, set B = A
 } STRU_TELE_RPM;
 */
+
+#define STRU_TELE_RPM_EMPTY_FIELDS_COUNT 8
+
 bool srxlFrameRpm(sbuf_t *dst, timeUs_t currentTimeUs)
 {
     UNUSED(currentTimeUs);
@@ -147,6 +153,7 @@ bool srxlFrameRpm(sbuf_t *dst, timeUs_t currentTimeUs)
     sbufWriteU16BigEndian(dst, getBatteryVoltage() * 10);   // vbat is in units of 0.1V
     sbufWriteU16BigEndian(dst, 0x7FFF);                     // temperature
 
+    sbufFill(dst, 0xFF, STRU_TELE_RPM_EMPTY_FIELDS_COUNT);
     return true;
 }
 
@@ -228,8 +235,11 @@ static bool lineSent[SPEKTRUM_SRXL_DEVICE_TEXTGEN_ROWS];
 int spektrumTmTextGenPutChar(uint8_t col, uint8_t row, char c)
 {
     if (row < SPEKTRUM_SRXL_TEXTGEN_BUFFER_ROWS && col < SPEKTRUM_SRXL_TEXTGEN_BUFFER_COLS) {
-        srxlTextBuff[row][col] = c;
-        lineSent[row] = false;
+      // Only update and force a tm transmision if something has actually changed.
+        if (srxlTextBuff[row][col] != c) {
+          srxlTextBuff[row][col] = c;
+          lineSent[row] = false;
+        }
     }
     return 0;
 }
@@ -444,6 +454,7 @@ const srxlScheduleFnPtr srxlScheduleFuncs[SRXL_TOTAL_COUNT] = {
 #endif
 };
 
+
 static void processSrxl(timeUs_t currentTimeUs)
 {
     static uint8_t srxlScheduleIndex = 0;
@@ -458,6 +469,16 @@ static void processSrxl(timeUs_t currentTimeUs)
     } else {
         srxlFnPtr = srxlScheduleFuncs[srxlScheduleIndex + srxlScheduleUserIndex];
         srxlScheduleUserIndex = (srxlScheduleUserIndex + 1) % SRXL_SCHEDULE_USER_COUNT;
+
+#if defined (USE_SPEKTRUM_CMS_TELEMETRY) && defined (USE_CMS)
+        // Boost CMS performance by sending nothing else but CMS Text frames when in a CMS menu.
+        // Sideeffect, all other reports are still not sent if user leaves CMS without a proper EXIT.
+        if (cmsInMenu &&
+            (pCurrentDisplay == &srxlDisplayPort)) {
+            srxlFnPtr = srxlFrameText;
+        }
+#endif
+
     }
 
     if (srxlFnPtr) {

@@ -48,6 +48,7 @@
 #include "io/serial.h"
 
 #include "pg/beeper.h"
+#include "pg/beeper_dev.h"
 #include "pg/pg.h"
 #include "pg/pg_ids.h"
 
@@ -78,7 +79,7 @@ PG_RESET_TEMPLATE(systemConfig_t, systemConfig,
     .activeRateProfile = 0,
     .debug_mode = DEBUG_MODE,
     .task_statistics = true,
-    .cpu_overclock = false,
+    .cpu_overclock = 0,
     .powerOnArmingGraceTime = 5,
     .boardIdentifier = TARGET_BOARD_IDENTIFIER
 );
@@ -329,6 +330,12 @@ static void validateAndFixConfig(void)
 
 #ifndef USE_GYRO_DATA_ANALYSE
     featureClear(FEATURE_DYNAMIC_FILTER);
+#endif
+
+#if defined(USE_BEEPER)
+    if (beeperDevConfig()->frequency && !timerGetByTag(beeperDevConfig()->ioTag, TIM_USE_BEEPER)) {
+        beeperDevConfigMutable()->frequency = 0;
+    }
 #endif
 
 #if defined(TARGET_VALIDATECONFIG)

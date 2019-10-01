@@ -27,10 +27,12 @@
 #define TARGET_BOARD_IDENTIFIER "PIKO" // Furious FPV PIKOBLX
 #endif
 
+#define ENABLE_DSHOT_DMAR       true
+#define REMAP_TIM16_DMA
+
 #define CONFIG_FASTLOOP_PREFERRED_ACC ACC_DEFAULT
 
 #define USE_TARGET_CONFIG
-#define USE_BRUSHED_ESC_AUTODETECT
 
 #define LED0_PIN                PB9
 #define LED1_PIN                PB5

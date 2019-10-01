@@ -399,6 +399,7 @@ bool rxUpdateCheck(timeUs_t currentTimeUs, timeDelta_t currentDeltaTime)
 #if defined(USE_PWM) || defined(USE_PPM)
     if (feature(FEATURE_RX_PPM)) {
         if (isPPMDataBeingReceived()) {
+            rxDataProcessingRequired = true;
             rxSignalReceived = true;
             rxIsInFailsafeMode = false;
             needRxSignalBefore = currentTimeUs + needRxSignalMaxDelayUs;
@@ -419,14 +420,17 @@ bool rxUpdateCheck(timeUs_t currentTimeUs, timeDelta_t currentDeltaTime)
             rxIsInFailsafeMode = (frameStatus & RX_FRAME_FAILSAFE) != 0;
             rxSignalReceived = !rxIsInFailsafeMode;
             needRxSignalBefore = currentTimeUs + needRxSignalMaxDelayUs;
-	} else if (cmpTimeUs(currentTimeUs, rxNextUpdateAtUs) > 0) {
-            rxDataProcessingRequired = true;
         }
 
         if (frameStatus & RX_FRAME_PROCESSING_REQUIRED) {
             auxiliaryProcessingRequired = true;
         }
     }
+
+    if (cmpTimeUs(currentTimeUs, rxNextUpdateAtUs) > 0) {
+        rxDataProcessingRequired = true;
+    }
+
     return rxDataProcessingRequired || auxiliaryProcessingRequired; // data driven or 50Hz
 }
 

@@ -35,6 +35,7 @@ extern "C" {
     #include "drivers/serial.h"
 
     #include "fc/config.h"
+    #include "fc/fc_core.h"
     #include "fc/rc_controls.h"
     #include "fc/rc_modes.h"
     #include "fc/runtime_config.h"
@@ -369,7 +370,7 @@ TEST(OsdTest, TestStatsImperial)
     displayPortTestBufferSubstring(2, row++, "2017-11-19 10:12:");
     displayPortTestBufferSubstring(2, row++, "TOTAL ARM         : 00:05.00");
     displayPortTestBufferSubstring(2, row++, "LAST ARM          : 00:03");
-    displayPortTestBufferSubstring(2, row++, "MAX SPEED         : 28");
+    displayPortTestBufferSubstring(2, row++, "MAX SPEED         : 17");
     displayPortTestBufferSubstring(2, row++, "MAX DISTANCE      : 328%c", SYM_FT);
     displayPortTestBufferSubstring(2, row++, "MIN BATTERY       : 14.7%c", SYM_VOLT);
     displayPortTestBufferSubstring(2, row++, "END BATTERY       : 15.2%c", SYM_VOLT);
@@ -850,7 +851,7 @@ TEST(OsdTest, TestElementWarningsBattery)
     osdRefresh(simulationTime);
 
     // then
-    displayPortTestBufferSubstring(9, 10, "BATT NOT FULL");
+    displayPortTestBufferSubstring(9, 10, "BATT < FULL");
 
     // given
     // full battery
@@ -1015,4 +1016,8 @@ extern "C" {
     uint16_t getRssi(void) { return rssi; }
 
     uint16_t getCoreTemperatureCelsius(void) { return simulationCoreTemperature; }
+
+    bool isFlipOverAfterCrashMode(void) {
+        return false;
+    }
 }

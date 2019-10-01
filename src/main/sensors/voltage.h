@@ -26,8 +26,11 @@
 typedef enum {
     VOLTAGE_METER_NONE = 0,
     VOLTAGE_METER_ADC,
-    VOLTAGE_METER_ESC
+    VOLTAGE_METER_ESC,
+    VOLTAGE_METER_COUNT
 } voltageMeterSource_e;
+
+extern const char * const voltageMeterSourceNames[VOLTAGE_METER_COUNT];
 
 // WARNING - do not mix usage of VOLTAGE_METER_* and VOLTAGE_SENSOR_*, they are separate concerns.
 
@@ -54,6 +57,12 @@ typedef enum {
 
 #define VBAT_SCALE_MIN 0
 #define VBAT_SCALE_MAX 255
+
+#define VBAT_DIVIDER_MIN 1
+#define VBAT_DIVIDER_MAX 255
+
+#define VBAT_MULTIPLIER_MIN 1
+#define VBAT_MULTIPLIER_MAX 255
 
 #define VBAT_LPF_FREQ  0.1f
 

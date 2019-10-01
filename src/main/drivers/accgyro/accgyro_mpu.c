@@ -140,14 +140,13 @@ static void mpuIntExtiInit(gyroDev_t *gyro)
     EXTIHandlerInit(&gyro->exti, mpuIntExtiHandler);
     EXTIConfig(mpuIntIO, &gyro->exti, NVIC_PRIO_MPU_INT_EXTI, IO_CONFIG(GPIO_MODE_INPUT,0,GPIO_NOPULL));   // TODO - maybe pullup / pulldown ?
 #else
-
     IOInit(mpuIntIO, OWNER_MPU_EXTI, 0);
     IOConfigGPIO(mpuIntIO, IOCFG_IN_FLOATING);   // TODO - maybe pullup / pulldown ?
 
     EXTIHandlerInit(&gyro->exti, mpuIntExtiHandler);
     EXTIConfig(mpuIntIO, &gyro->exti, NVIC_PRIO_MPU_INT_EXTI, EXTI_Trigger_Rising);
-    EXTIEnable(mpuIntIO, true);
 #endif
+    EXTIEnable(mpuIntIO, true);
 }
 #endif // MPU_INT_EXTI
 
@@ -181,23 +180,6 @@ bool mpuGyroRead(gyroDev_t *gyro)
     gyro->gyroADCRaw[Z] = (int16_t)((data[4] << 8) | data[5]);
 
     return true;
-}
-
-gyroOverflow_e mpuGyroCheckOverflow(const gyroDev_t *gyro)
-{
-    // we cannot detect overflow directly, so assume overflow if absolute gyro rate is large
-    gyroOverflow_e ret = GYRO_OVERFLOW_NONE;
-    const int16_t overflowValue = 0x7C00; // this is a slightly conservative value, could probably be as high as 0x7FF0
-    if (gyro->gyroADCRaw[X] > overflowValue || gyro->gyroADCRaw[X] < -overflowValue) {
-        ret |= GYRO_OVERFLOW_X;
-    }
-    if (gyro->gyroADCRaw[Y] > overflowValue || gyro->gyroADCRaw[Y] < -overflowValue) {
-        ret |= GYRO_OVERFLOW_Y;
-    }
-    if (gyro->gyroADCRaw[Z] > overflowValue || gyro->gyroADCRaw[Z] < -overflowValue) {
-        ret |= GYRO_OVERFLOW_Z;
-    }
-    return ret;
 }
 
 bool mpuGyroReadSPI(gyroDev_t *gyro)

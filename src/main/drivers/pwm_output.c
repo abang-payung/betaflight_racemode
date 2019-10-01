@@ -47,6 +47,9 @@ static uint16_t freqBeep = 0;
 
 static bool pwmMotorsEnabled = false;
 static bool isDshot = false;
+#ifdef USE_DSHOT_DMAR
+bool useBurstDshot = false;
+#endif
 
 static void pwmOCConfig(TIM_TypeDef *tim, uint8_t channel, uint16_t value, uint8_t output)
 {
@@ -260,6 +263,11 @@ void motorDevInit(const motorDevConfig_t *motorConfig, uint16_t idlePulse, uint8
         loadDmaBuffer = &loadDmaBufferDshot;
         pwmCompleteWrite = &pwmCompleteDshotMotorUpdate;
         isDshot = true;
+#ifdef USE_DSHOT_DMAR
+        if (motorConfig->useBurstDshot) {
+            useBurstDshot = true;
+        }
+#endif
         break;
 #endif
     }
@@ -295,11 +303,7 @@ void motorDevInit(const motorDevConfig_t *motorConfig, uint16_t idlePulse, uint8
         }
 #endif
 
-#if defined(USE_HAL_DRIVER)
         IOConfigGPIOAF(motors[motorIndex].io, IOCFG_AF_PP, timerHardware->alternateFunction);
-#else
-        IOConfigGPIO(motors[motorIndex].io, IOCFG_AF_PP);
-#endif
 
         /* standard PWM outputs */
         // margin of safety is 4 periods when unsynced
@@ -459,37 +463,42 @@ void servoDevInit(const servoDevConfig_t *servoConfig)
 #ifdef BEEPER
 void pwmWriteBeeper(bool onoffBeep)
 {
-        if (!beeperPwm.io)
-            return;
-        if (onoffBeep == true) {
-            *beeperPwm.channel.ccr = (PWM_TIMER_1MHZ / freqBeep) / 2;
-            beeperPwm.enabled = true;
-        } else {
-            *beeperPwm.channel.ccr = 0;
-            beeperPwm.enabled = false;
-        }
+    if (!beeperPwm.io) {
+        return;
+    }
+
+    if (onoffBeep == true) {
+        *beeperPwm.channel.ccr = (PWM_TIMER_1MHZ / freqBeep) / 2;
+        beeperPwm.enabled = true;
+    } else {
+        *beeperPwm.channel.ccr = 0;
+        beeperPwm.enabled = false;
+    }
 }
 
 void pwmToggleBeeper(void)
 {
-        pwmWriteBeeper(!beeperPwm.enabled);
+    pwmWriteBeeper(!beeperPwm.enabled);
 }
 
 void beeperPwmInit(const ioTag_t tag, uint16_t frequency)
 {
-        beeperPwm.io = IOGetByTag(tag);
-        const timerHardware_t *timer = timerGetByTag(tag, TIM_USE_BEEPER);
-        if (beeperPwm.io && timer) {
-            IOInit(beeperPwm.io, OWNER_BEEPER, RESOURCE_INDEX(0));
+    const timerHardware_t *timer = timerGetByTag(tag, TIM_USE_BEEPER);
+    IO_t beeperIO = IOGetByTag(tag);
+
+    if (beeperIO && timer) {
+        beeperPwm.io = beeperIO;
+        IOInit(beeperPwm.io, OWNER_BEEPER, RESOURCE_INDEX(0));
 #if defined(USE_HAL_DRIVER)
-            IOConfigGPIOAF(beeperPwm.io, IOCFG_AF_PP, timer->alternateFunction);
+        IOConfigGPIOAF(beeperPwm.io, IOCFG_AF_PP, timer->alternateFunction);
 #else
-            IOConfigGPIO(beeperPwm.io, IOCFG_AF_PP);
+        IOConfigGPIO(beeperPwm.io, IOCFG_AF_PP);
 #endif
-            freqBeep = frequency;
-            pwmOutConfig(&beeperPwm.channel, timer, PWM_TIMER_1MHZ, PWM_TIMER_1MHZ / freqBeep, (PWM_TIMER_1MHZ / freqBeep) / 2, 0);
-        }
+        freqBeep = frequency;
+        pwmOutConfig(&beeperPwm.channel, timer, PWM_TIMER_1MHZ, PWM_TIMER_1MHZ / freqBeep, (PWM_TIMER_1MHZ / freqBeep) / 2, 0);
+
         *beeperPwm.channel.ccr = 0;
         beeperPwm.enabled = false;
+    }
 }
 #endif
