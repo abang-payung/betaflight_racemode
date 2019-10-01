@@ -381,6 +381,7 @@ static void validateAndFixConfig(void)
     if (beeperConfig()->beeper_off_flags & ~BEEPER_ALLOWED_MODES) {
         beeperConfigMutable()->beeper_off_flags = 0;
     }
+#endif
 
 #ifdef USE_DSHOT
     if (beeperConfig()->dshotBeaconOffFlags & ~DSHOT_BEACON_ALLOWED_MODES) {

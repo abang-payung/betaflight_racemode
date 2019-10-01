@@ -795,7 +795,7 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, const rollAndPitchT
             currentPidSetpoint = accelerationLimit(axis, currentPidSetpoint);
         }
         // Yaw control is GYRO based, direct sticks control is applied to rate PID
-=======
+
 // Seperate horizon hacked to racemode and angle so ignoring pitch axis on racemode doesnt break angle mode
 if ((FLIGHT_MODE(HORIZON_MODE)) && ((axis != YAW)&&(axis !=PITCH))) {
           currentPidSetpoint = pidLevel(axis, pidProfile, angleTrim, currentPidSetpoint);
