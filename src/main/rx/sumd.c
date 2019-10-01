@@ -28,6 +28,7 @@
 
 #include "common/crc.h"
 #include "common/utils.h"
+#include "common/maths.h"
 
 #include "drivers/time.h"
 
@@ -44,16 +45,18 @@
 
 // driver for SUMD receiver using UART2
 
-// FIXME test support for more than 8 channels, should probably work up to 12 channels
+// Support for SUMD and SUMD V3
+// Tested with 16 channels, SUMD supports up to 16(*), SUMD V3 up to 32 (MZ-32) channels, but limit to MAX_SUPPORTED_RC_CHANNEL_COUNT (currently 8, BF 3.4)
+// * According to the original SUMD V1 documentation, SUMD V1 already supports up to 32 Channels?!?
 
 #define SUMD_SYNCBYTE 0xA8
-#define SUMD_MAX_CHANNEL 16
+#define SUMD_MAX_CHANNEL 32
 #define SUMD_BUFFSIZE (SUMD_MAX_CHANNEL * 2 + 5) // 6 channels + 5 = 17 bytes for 6 channels
 
 #define SUMD_BAUDRATE 115200
 
 static bool sumdFrameDone = false;
-static uint16_t sumdChannels[SUMD_MAX_CHANNEL];
+static uint16_t sumdChannels[MAX_SUPPORTED_RC_CHANNEL_COUNT];
 static uint16_t crc;
 
 static uint8_t sumd[SUMD_BUFFSIZE] = { 0, };
@@ -101,14 +104,13 @@ static void sumdDataReceive(uint16_t c, void *data)
 #define SUMD_BYTES_PER_CHANNEL 2
 
 
-#define SUMD_FRAME_STATE_OK 0x01
+#define SUMDV1_FRAME_STATE_OK 0x01
+#define SUMDV3_FRAME_STATE_OK 0x03
 #define SUMD_FRAME_STATE_FAILSAFE 0x81
 
 static uint8_t sumdFrameStatus(rxRuntimeConfig_t *rxRuntimeConfig)
 {
     UNUSED(rxRuntimeConfig);
-
-    uint8_t channelIndex;
 
     uint8_t frameStatus = RX_FRAME_PENDING;
 
@@ -127,17 +129,17 @@ static uint8_t sumdFrameStatus(rxRuntimeConfig_t *rxRuntimeConfig)
         case SUMD_FRAME_STATE_FAILSAFE:
             frameStatus = RX_FRAME_COMPLETE | RX_FRAME_FAILSAFE;
             break;
-        case SUMD_FRAME_STATE_OK:
+        case SUMDV1_FRAME_STATE_OK:
+        case SUMDV3_FRAME_STATE_OK:
             frameStatus = RX_FRAME_COMPLETE;
             break;
         default:
             return frameStatus;
     }
 
-    if (sumdChannelCount > SUMD_MAX_CHANNEL)
-        sumdChannelCount = SUMD_MAX_CHANNEL;
+    unsigned channelsToProcess = MIN(sumdChannelCount, MAX_SUPPORTED_RC_CHANNEL_COUNT);
 
-    for (channelIndex = 0; channelIndex < sumdChannelCount; channelIndex++) {
+    for (unsigned channelIndex = 0; channelIndex < channelsToProcess; channelIndex++) {
         sumdChannels[channelIndex] = (
             (sumd[SUMD_BYTES_PER_CHANNEL * channelIndex + SUMD_OFFSET_CHANNEL_1_HIGH] << 8) |
             sumd[SUMD_BYTES_PER_CHANNEL * channelIndex + SUMD_OFFSET_CHANNEL_1_LOW]
@@ -156,7 +158,7 @@ bool sumdInit(const rxConfig_t *rxConfig, rxRuntimeConfig_t *rxRuntimeConfig)
 {
     UNUSED(rxConfig);
 
-    rxRuntimeConfig->channelCount = SUMD_MAX_CHANNEL;
+    rxRuntimeConfig->channelCount = MIN(SUMD_MAX_CHANNEL, MAX_SUPPORTED_RC_CHANNEL_COUNT);
     rxRuntimeConfig->rxRefreshRate = 11000;
 
     rxRuntimeConfig->rcReadRawFn = sumdReadRawRC;

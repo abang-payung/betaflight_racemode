@@ -30,9 +30,12 @@
 #define BEEPER_PIN              PA4
 #define BEEPER_INVERTED
 
+<<<<<<< HEAD
 #define CAMERA_CONTROL_PIN      PB3
 
 #define USE_DUAL_GYRO
+=======
+>>>>>>> betaflight/4.0.x-maintenance
 #define USE_EXTI
 #define USE_GYRO_EXTI
 #define GYRO_1_EXTI_PIN         PC4
@@ -54,6 +57,7 @@
 #define USE_ACC_SPI_MPU6000
 #define USE_ACC_SPI_MPU6500
 
+<<<<<<< HEAD
 #define ACC_MPU6000_1_ALIGN           CW270_DEG
 #define GYRO_MPU6000_1_ALIGN          CW270_DEG
 #define GYRO_1_ALIGN                GYRO_MPU6000_1_ALIGN
@@ -63,6 +67,13 @@
 #define GYRO_MPU6500_2_ALIGN        CW180_DEG
 #define GYRO_2_ALIGN                GYRO_MPU6500_2_ALIGN 
 #define ACC_2_ALIGN                 ACC_MPU6500_2_ALIGN
+=======
+#define GYRO_1_ALIGN                CW270_DEG
+#define ACC_1_ALIGN                 CW270_DEG
+
+#define GYRO_2_ALIGN                CW180_DEG
+#define ACC_2_ALIGN                 CW180_DEG
+>>>>>>> betaflight/4.0.x-maintenance
 
 #define GYRO_CONFIG_USE_GYRO_DEFAULT GYRO_CONFIG_USE_GYRO_1 
 
@@ -71,6 +82,10 @@
 
 #define USE_MAG
 #define USE_MAG_HMC5883
+<<<<<<< HEAD
+=======
+#define USE_MAG_LIS3MDL
+>>>>>>> betaflight/4.0.x-maintenance
 
 #define USE_VCP
 #define USE_UART1
@@ -130,7 +145,12 @@
 
 #define USE_ADC
 #define ADC_INSTANCE                        ADC3
+<<<<<<< HEAD
 #define ADC3_DMA_STREAM                     DMA2_Stream0
+=======
+#define ADC3_DMA_OPT                        0  // DMA 2 Stream 0 Channel 2 
+
+>>>>>>> betaflight/4.0.x-maintenance
 
 #define VBAT_ADC_PIN                        PC0
 #define CURRENT_METER_ADC_PIN               PC2

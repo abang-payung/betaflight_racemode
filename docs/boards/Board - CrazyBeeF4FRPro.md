@@ -9,7 +9,7 @@ CrazyBee F4 FR Pro flight controller is a Highly integrated board(Receiver/4in1 
 
 ### Hardware and Features
   - MCU: STM32F411CEU6 (100MHZ, 512K FLASH)
-  - IMU: MPU6000 (SPI) 
+  - IMU: MPU6000 (SPI)
   - OSD: Betaflight OSD
   - Battery Voltage Sensor: yes
   - Power supply: 1-2S battery input (DC 3.5-8.7V)
@@ -79,5 +79,4 @@ Basic telemetry information like RSSI and battery voltage will be sent even when
 
 ## Other Resources
 
-- User Manual: Will add soon...
-
+- User Manual: http://www.happymodel.cn/wp-content/uploads/2019/01/CrazyBee-F4FR-Pro-Frsky-version-Manual-.pdf

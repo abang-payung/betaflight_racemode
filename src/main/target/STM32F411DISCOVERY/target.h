@@ -21,7 +21,11 @@
 #pragma once
 
 #define TARGET_BOARD_IDENTIFIER "S411" // STM Discovery F411
+<<<<<<< HEAD
 #define USBD_PRODUCT_STRING     "DISCF411"
+=======
+#define USBD_PRODUCT_STRING     "STM32F411DISCOVERY"
+>>>>>>> betaflight/4.0.x-maintenance
 
 #define USE_SENSOR_NAMES
 
@@ -43,9 +47,20 @@
 #define USE_GYRO
 
 #define USE_GYRO_L3GD20
+<<<<<<< HEAD
 #define L3GD20_SPI              SPI1
 #define L3GD20_CS_PIN           PE3
 #define GYRO_L3GD20_ALIGN       CW180_DEG
+=======
+#define GYRO_1_SPI_INSTANCE     SPI1
+#define GYRO_1_CS_PIN           PE3
+#define GYRO_1_ALIGN            CW180_DEG
+
+#define USE_EXTI
+#define USE_GYRO_EXTI
+#define GYRO_1_EXTI_PIN         PE1
+#define USE_MPU_DATA_READY_SIGNAL
+>>>>>>> betaflight/4.0.x-maintenance
 
 // Acc
 #define USE_ACC

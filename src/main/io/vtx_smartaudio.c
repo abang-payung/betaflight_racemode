@@ -63,8 +63,10 @@ serialPort_t *debugSerialPort = NULL;
 
 static serialPort_t *smartAudioSerialPort = NULL;
 
+smartAudioDevice_t saDevice;
+
 #if defined(USE_CMS) || defined(USE_VTX_COMMON)
-const char * const saPowerNames[VTX_SMARTAUDIO_POWER_COUNT+1] = {
+const char * saPowerNames[VTX_SMARTAUDIO_POWER_COUNT+1] = {
     "---", "25 ", "200", "500", "800",
 };
 #endif
@@ -73,12 +75,6 @@ const char * const saPowerNames[VTX_SMARTAUDIO_POWER_COUNT+1] = {
 static const vtxVTable_t saVTable;    // Forward
 static vtxDevice_t vtxSmartAudio = {
     .vTable = &saVTable,
-    .capability.bandCount = VTX_SMARTAUDIO_BAND_COUNT,
-    .capability.channelCount = VTX_SMARTAUDIO_CHANNEL_COUNT,
-    .capability.powerCount = VTX_SMARTAUDIO_POWER_COUNT,
-    .bandNames = (char **)vtx58BandNames,
-    .channelNames = (char **)vtx58ChannelNames,
-    .powerNames = (char **)saPowerNames,
 };
 #endif
 
@@ -128,6 +124,10 @@ saPowerTable_t saPowerTable[VTX_SMARTAUDIO_POWER_COUNT] = {
     { 800,  40,   3 },
 };
 
+uint16_t saPowerValues[VTX_SMARTAUDIO_POWER_COUNT] = {
+    25, 200, 500, 800
+};
+
 // Last received device ('hard') states
 
 smartAudioDevice_t saDevice = {
@@ -150,7 +150,7 @@ static uint8_t saLockMode = SA_MODE_SET_UNLOCK; // saCms variable?
 bool saDeferred = true; // saCms variable?
 
 // Receive frame reassembly buffer
-#define SA_MAX_RCVLEN 15
+#define SA_MAX_RCVLEN 21
 static uint8_t sa_rbuf[SA_MAX_RCVLEN+4]; // XXX delete 4 byte guard
 
 //
@@ -269,6 +269,12 @@ static void saProcessResponse(uint8_t *buf, int len)
 {
     uint8_t resp = buf[0];
 
+    if (IS_RC_MODE_ACTIVE(BOXVTXCONTROLDISABLE)) {
+        sa_outstanding = SA_CMD_NONE;
+
+        return;
+    }
+
     if (resp == sa_outstanding) {
         sa_outstanding = SA_CMD_NONE;
     } else if ((resp == SA_CMD_GET_SETTINGS_V2 ||
@@ -363,7 +369,7 @@ static void saProcessResponse(uint8_t *buf, int len)
 // Datalink
 //
 
-static void saReceiveFramer(uint8_t c)
+static void saReceiveFrame(uint8_t c)
 {
 
     static enum saFramerState_e {
@@ -443,23 +449,28 @@ static void saReceiveFramer(uint8_t c)
 
 static void saSendFrame(uint8_t *buf, int len)
 {
-    switch (smartAudioSerialPort->identifier) {
-        case SERIAL_PORT_SOFTSERIAL1:
-        case SERIAL_PORT_SOFTSERIAL2:
-            break;
-        default:
-            serialWrite(smartAudioSerialPort, 0x00); // Generate 1st start bit
-            break;
-    }
+    if (!IS_RC_MODE_ACTIVE(BOXVTXCONTROLDISABLE)) {
+        switch (smartAudioSerialPort->identifier) {
+            case SERIAL_PORT_SOFTSERIAL1:
+            case SERIAL_PORT_SOFTSERIAL2:
+                break;
+            default:
+                serialWrite(smartAudioSerialPort, 0x00); // Generate 1st start bit
+                break;
+        }
 
-    for (int i = 0 ; i < len ; i++) {
-        serialWrite(smartAudioSerialPort, buf[i]);
+        for (int i = 0 ; i < len ; i++) {
+            serialWrite(smartAudioSerialPort, buf[i]);
+        }
+
+        saStat.pktsent++;
+    } else {
+        sa_outstanding = SA_CMD_NONE;
     }
 
     serialWrite(smartAudioSerialPort, 0x00);
 
     sa_lastTransmissionMs = millis();
-    saStat.pktsent++;
 }
 
 /*
@@ -535,7 +546,7 @@ static void saQueueCmd(uint8_t *buf, int len)
 static void saSendQueue(void)
 {
     if (saQueueEmpty()) {
-         return;
+        return;
     }
 
     saSendCmd(sa_queue[sa_qtail].buf, sa_queue[sa_qtail].len);
@@ -693,7 +704,19 @@ bool vtxSmartAudioInit(void)
         return false;
     }
 
+    vtxSmartAudio.capability.bandCount = VTX_SMARTAUDIO_BAND_COUNT;
+    vtxSmartAudio.capability.channelCount = VTX_SMARTAUDIO_CHANNEL_COUNT;
+    vtxSmartAudio.capability.powerCount = VTX_SMARTAUDIO_POWER_COUNT;
+    vtxSmartAudio.frequencyTable = vtxStringFrequencyTable();
+    vtxSmartAudio.bandNames = vtxStringBandNames();
+    vtxSmartAudio.bandLetters = vtxStringBandLetters();
+    vtxSmartAudio.channelNames = vtxStringChannelNames();
+    vtxSmartAudio.powerNames = saPowerNames;
+    vtxSmartAudio.powerValues = saPowerValues;
+
     vtxCommonSetDevice(&vtxSmartAudio);
+
+    vtxInit();
 
     return true;
 }
@@ -716,7 +739,7 @@ static void vtxSAProcess(vtxDevice_t *vtxDevice, timeUs_t currentTimeUs)
 
     while (serialRxBytesWaiting(smartAudioSerialPort) > 0) {
         uint8_t c = serialRead(smartAudioSerialPort);
-        saReceiveFramer((uint16_t)c);
+        saReceiveFrame((uint16_t)c);
     }
 
     // Re-evaluate baudrate after each frame reception
@@ -884,8 +907,9 @@ static bool vtxSAGetFreq(const vtxDevice_t *vtxDevice, uint16_t *pFreq)
 
     // if not in user-freq mode then convert band/chan to frequency
     *pFreq = (saDevice.mode & SA_MODE_GET_FREQ_BY_FREQ) ? saDevice.freq :
-        vtx58_Bandchan2Freq(SA_DEVICE_CHVAL_TO_BAND(saDevice.channel) + 1,
-        SA_DEVICE_CHVAL_TO_CHANNEL(saDevice.channel) + 1);
+        vtxCommonLookupFrequency(&vtxSmartAudio,
+                SA_DEVICE_CHVAL_TO_BAND(saDevice.channel) + 1,
+                SA_DEVICE_CHVAL_TO_CHANNEL(saDevice.channel) + 1);
     return true;
 }
 

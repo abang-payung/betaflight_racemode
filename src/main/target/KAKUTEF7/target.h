@@ -20,8 +20,17 @@
 
 #pragma once
 
+<<<<<<< HEAD
 //#define USE_TARGET_CONFIG
 #if defined(KAKUTEF7MINI)
+=======
+#define USE_TARGET_CONFIG
+
+#ifdef KAKUTEF7V2
+#define TARGET_BOARD_IDENTIFIER "KT76"
+#define USBD_PRODUCT_STRING "KakuteF7-V2"
+#elif defined(KAKUTEF7MINI)
+>>>>>>> betaflight/4.0.x-maintenance
 #define TARGET_BOARD_IDENTIFIER "KF7M"
 #define USBD_PRODUCT_STRING "KakuteF7-Mini"
 #else
@@ -35,26 +44,28 @@
 #define BEEPER_PIN              PD15
 #define BEEPER_INVERTED
 
+//define camera control
+#define CAMERA_CONTROL_PIN      PE13
+
 #define USE_ACC
 #define USE_GYRO
+#define USE_EXTI
+
+// MPU6000
+#define USE_ACC_SPI_MPU6000
+#define USE_GYRO_SPI_MPU6000
 
 // ICM-20689
 #define USE_ACC_SPI_ICM20689
 #define USE_GYRO_SPI_ICM20689
-#define GYRO_ICM20689_ALIGN      CW270_DEG
-#define ACC_ICM20689_ALIGN       CW270_DEG
-#define MPU_INT_EXTI               PE1
+#define GYRO_1_CS_PIN           SPI4_NSS_PIN
+#define GYRO_1_SPI_INSTANCE     SPI4
+#define GYRO_1_ALIGN            CW270_DEG
+#define ACC_1_ALIGN             CW270_DEG
 
-#define ICM20689_CS_PIN          SPI4_NSS_PIN
-#define ICM20689_SPI_INSTANCE    SPI4
-#define GYRO_1_CS_PIN            ICM20689_CS_PIN
-#define GYRO_1_SPI_INSTANCE      ICM20689_SPI_INSTANCE
-
-#define ACC_1_ALIGN              ACC_ICM20689_ALIGN
-#define GYRO_1_ALIGN             GYRO_ICM20689_ALIGN
-
+#define USE_GYRO_EXTI
+#define GYRO_1_EXTI_PIN         PE1
 #define USE_MPU_DATA_READY_SIGNAL
-#define USE_EXTI
 
 #define USE_VCP
 #define USE_USB_DETECT
@@ -127,18 +138,18 @@
 #define FLASH_SPI_INSTANCE      SPI1
 #else
 #define USE_SDCARD
+#define USE_SDCARD_SPI
 #define SDCARD_DETECT_INVERTED
 #define SDCARD_DETECT_PIN                   PD8
-
 #define SDCARD_SPI_INSTANCE                 SPI1
 #define SDCARD_SPI_CS_PIN                   SPI1_NSS_PIN
-
-#define SDCARD_SPI_INITIALIZATION_CLOCK_DIVIDER 256 // 422kHz
-
-#define SDCARD_SPI_FULL_SPEED_CLOCK_DIVIDER      8 // 27MHz
+#define SPI1_TX_DMA_OPT                       1     // DMA 2 Stream 5 Channel 3
 
 #define SDCARD_DMA_STREAM_TX_FULL             DMA2_Stream5
+<<<<<<< HEAD
 #define SDCARD_DMA_CHANNEL                    3
+=======
+>>>>>>> betaflight/4.0.x-maintenance
 #endif
 
 #define USE_I2C
@@ -154,9 +165,8 @@
 #define USE_MAG
 #define USE_MAG_HMC5883
 #define USE_MAG_QMC5883
+#define USE_MAG_LIS3MDL
 #define MAG_I2C_INSTANCE      I2C_DEVICE
-
-#define SENSORS_SET (SENSOR_ACC | SENSOR_BARO)
 
 #define DEFAULT_VOLTAGE_METER_SOURCE VOLTAGE_METER_ADC
 #define DEFAULT_CURRENT_METER_SOURCE CURRENT_METER_ADC
@@ -172,7 +182,10 @@
 #define DEFAULT_RX_FEATURE      FEATURE_RX_SERIAL
 #define SERIALRX_UART           SERIAL_PORT_USART6
 #define SERIALRX_PROVIDER       SERIALRX_SBUS
+<<<<<<< HEAD
 #define ESC_SENSOR_UART         SERIAL_PORT_USART7
+=======
+>>>>>>> betaflight/4.0.x-maintenance
 
 #define TARGET_IO_PORTA 0xffff
 #define TARGET_IO_PORTB 0xffff

@@ -38,6 +38,8 @@
 
 #include "rx/rx.h"
 
+#include "pg/rcdevice.h"
+
 #ifdef USE_RCDEVICE
 
 #define IS_HI(X) (rcData[X] > FIVE_KEY_CABLE_JOYSTICK_MAX)
@@ -55,7 +57,7 @@ bool waitingDeviceResponse = false;
 
 static bool isFeatureSupported(uint8_t feature)
 {
-    if (camDevice->info.features & feature) {
+    if (camDevice->info.features & feature || rcdeviceConfig()->feature & feature) {
         return true;
     }
 
@@ -67,22 +69,13 @@ bool rcdeviceIsEnabled(void)
     return camDevice->serialPort != NULL;
 }
 
-static bool rcdeviceIs5KeyEnabled(void)
-{
-    if (camDevice->serialPort != NULL && isFeatureSupported(RCDEVICE_PROTOCOL_FEATURE_SIMULATE_5_KEY_OSD_CABLE)) {
-        return true;
-    }
-
-    return false;
-}
-
 static void rcdeviceCameraControlProcess(void)
 {
     for (boxId_e i = BOXCAMERA1; i <= BOXCAMERA3; i++) {
         uint8_t switchIndex = i - BOXCAMERA1;
 
         if (IS_RC_MODE_ACTIVE(i)) {
-            
+
             // check last state of this mode, if it's true, then ignore it.
             // Here is a logic to make a toggle control for this mode
             if (switchStates[switchIndex].isActivated) {
@@ -94,7 +87,7 @@ static void rcdeviceCameraControlProcess(void)
             case BOXCAMERA1:
                 if (isFeatureSupported(RCDEVICE_PROTOCOL_FEATURE_SIMULATE_WIFI_BUTTON)) {
                     // avoid display wifi page when arming, in the next firmware(>2.0) of rcsplit we have change the wifi page logic:
-                    // when the wifi was turn on it won't turn off the analog video output, 
+                    // when the wifi was turn on it won't turn off the analog video output,
                     // and just put a wifi indicator on the right top of the video output. here is for the old split firmware
                     if (!ARMING_FLAG(ARMED) && ((getArmingDisableFlags() & ARMING_DISABLED_RUNAWAY_TAKEOFF) == 0)) {
                         behavior = RCDEVICE_PROTOCOL_CAM_CTRL_SIMULATE_WIFI_BTN;
@@ -103,7 +96,7 @@ static void rcdeviceCameraControlProcess(void)
                 break;
             case BOXCAMERA2:
                 if (isFeatureSupported(RCDEVICE_PROTOCOL_FEATURE_SIMULATE_POWER_BUTTON)) {
-                    behavior = RCDEVICE_PROTOCOL_CAM_CTRL_SIMULATE_POWER_BTN;        
+                    behavior = RCDEVICE_PROTOCOL_CAM_CTRL_SIMULATE_POWER_BTN;
                 }
                 break;
             case BOXCAMERA3:
@@ -135,7 +128,7 @@ static void rcdeviceSimulationOSDCableFailed(rcdeviceResponseParseContext_t *ctx
         if (operationID == RCDEVICE_PROTOCOL_5KEY_CONNECTION_CLOSE) {
             return;
         }
-    } 
+    }
 }
 
 static void rcdeviceSimulationRespHandle(rcdeviceResponseParseContext_t *ctx)
@@ -297,9 +290,7 @@ void rcdeviceUpdate(timeUs_t currentTimeUs)
 
     rcdeviceCameraControlProcess();
 
-    if (rcdeviceIs5KeyEnabled()) {
-        rcdevice5KeySimulationProcess(currentTimeUs);
-    }
+    rcdevice5KeySimulationProcess(currentTimeUs);
 }
 
 void rcdeviceInit(void)

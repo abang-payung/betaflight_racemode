@@ -8,6 +8,10 @@ TARGET_SRC = \
             drivers/barometer/barometer_bmp280.c \
             drivers/barometer/barometer_ms5611.c \
             drivers/compass/compass_hmc5883l.c \
+<<<<<<< HEAD
+=======
+            drivers/compass/compass_lis3mdl.c \
+>>>>>>> betaflight/4.0.x-maintenance
             drivers/max7456.c 
 
 

@@ -25,8 +25,11 @@
 #define TARGET_BOARD_IDENTIFIER "JH7D"
 #define USBD_PRODUCT_STRING     "JHEF7DUAL"
 
+<<<<<<< HEAD
 #define CAMERA_CONTROL_PIN      PB8
 
+=======
+>>>>>>> betaflight/4.0.x-maintenance
 #define ENABLE_DSHOT_DMAR       true
 
 #define LED0_PIN                PA15

@@ -22,8 +22,8 @@
 
 #define TARGET_BOARD_IDENTIFIER "REF3"
 
-// Removed to make the firmware fit into flash (in descending order of priority):
 #undef USE_GYRO_OVERFLOW_CHECK
+<<<<<<< HEAD
 #undef USE_GYRO_LPF2
 
 //#undef USE_TELEMETRY_MAVLINK
@@ -36,6 +36,8 @@
 #undef USE_ESC_SENSOR_INFO
 
 
+=======
+>>>>>>> betaflight/4.0.x-maintenance
 
 #define LED0_PIN    PB4
 #define LED1_PIN    PB5
@@ -46,19 +48,20 @@
 
 #define USE_EXTI
 #define USE_MPU_DATA_READY_SIGNAL
-#define MPU_INT_EXTI PA15
+#define USE_GYRO_EXTI
+#define GYRO_1_EXTI_PIN         PA15
 
 #define USE_GYRO
 #define USE_GYRO_SPI_MPU6000
 #define USE_ACC_SPI_MPU6000
 
-#define MPU6000_CS_PIN          PB12
-#define MPU6000_SPI_INSTANCE    SPI2
+#define GYRO_1_CS_PIN           PB12
+#define GYRO_1_SPI_INSTANCE     SPI2
 
 #define USE_ACC
 
-#define ACC_MPU6000_ALIGN CW180_DEG
-#define GYRO_MPU6000_ALIGN CW180_DEG
+#define ACC_1_ALIGN       CW180_DEG
+#define GYRO_1_ALIGN       CW180_DEG
 
 #define USE_BARO
 #define USE_BARO_MS5611
@@ -131,4 +134,4 @@
 #define TARGET_IO_PORTF (BIT(0)|BIT(1)|BIT(4))
 
 #define USABLE_TIMER_CHANNEL_COUNT 7
-#define USED_TIMERS  (TIM_N(1) | TIM_N(2) | TIM_N(3) | TIM_N(17))
+#define USED_TIMERS  (TIM_N(1) | TIM_N(2) | TIM_N(3) | TIM_N(16) | TIM_N(17))

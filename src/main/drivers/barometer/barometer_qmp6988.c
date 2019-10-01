@@ -17,7 +17,9 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <platform.h>
+
+#include "platform.h"
+
 #include "build/build_config.h"
 #include "build/debug.h"
 #include "barometer.h"
@@ -104,7 +106,11 @@ void qmp6988BusInit(busDevice_t *busdev)
         IOHi(busdev->busdev_u.spi.csnPin); 
         IOInit(busdev->busdev_u.spi.csnPin, OWNER_BARO_CS, 0);
         IOConfigGPIO(busdev->busdev_u.spi.csnPin, IOCFG_OUT_PP);
-        spiSetDivisor(busdev->busdev_u.spi.instance, SPI_CLOCK_STANDARD);
+#ifdef USE_SPI_TRANSACTION
+        spiBusTransactionInit(busdev, SPI_MODE3_POL_HIGH_EDGE_2ND, SPI_CLOCK_STANDARD);
+#else
+        spiBusSetDivisor(busdev, SPI_CLOCK_STANDARD);
+#endif
     }
 #else
     UNUSED(busdev);
@@ -117,7 +123,7 @@ void qmp6988BusDeinit(busDevice_t *busdev)
     if (busdev->bustype == BUSTYPE_SPI) {
         IOConfigGPIO(busdev->busdev_u.spi.csnPin, IOCFG_IPU);
         IORelease(busdev->busdev_u.spi.csnPin);
-        IOInit(busdev->busdev_u.spi.csnPin, OWNER_SPI_PREINIT, 0);
+        IOInit(busdev->busdev_u.spi.csnPin, OWNER_PREINIT, 0);
     }
 #else
     UNUSED(busdev);

@@ -30,8 +30,13 @@
 
 #include "common/utils.h"
 
+<<<<<<< HEAD
 #include "interface/msp.h"
 #include "interface/msp_protocol.h"
+=======
+#include "msp/msp.h"
+#include "msp/msp_protocol.h"
+>>>>>>> betaflight/4.0.x-maintenance
 
 #include "telemetry/crsf.h"
 #include "telemetry/msp_shared.h"

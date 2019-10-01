@@ -31,10 +31,14 @@
 #define BEEPER_PIN              PA4
 #define BEEPER_INVERTED
 
+<<<<<<< HEAD
 //define camera control
 #define CAMERA_CONTROL_PIN PB3
 
 //Gyro & ACC-------------------------------
+=======
+//Gyro & ACC------------------------------- 
+>>>>>>> betaflight/4.0.x-maintenance
 #define USE_SPI
 #define USE_SPI_DEVICE_1
 
@@ -43,29 +47,37 @@
 #define SPI1_MOSI_PIN           PA7
 
 #define USE_EXTI
-#define MPU_INT_EXTI            PC4
+#define USE_GYRO_EXTI
+#define GYRO_1_EXTI_PIN         PC4
 #define USE_MPU_DATA_READY_SIGNAL
 
 #define USE_GYRO
 #define USE_ACC
+<<<<<<< HEAD
 //------ICM20689
 #define ICM20689_CS_PIN          PB2
 #define ICM20689_SPI_INSTANCE    SPI1
+=======
+#define GYRO_1_CS_PIN           PB2
+#define GYRO_1_SPI_INSTANCE     SPI1
+#define GYRO_1_ALIGN            CW90_DEG
+#define ACC_1_ALIGN             CW90_DEG
+>>>>>>> betaflight/4.0.x-maintenance
 
+//------ICM20689
 #define USE_GYRO_SPI_ICM20689
-#define GYRO_ICM20689_ALIGN      CW90_DEG
-
 #define USE_ACC_SPI_ICM20689
+<<<<<<< HEAD
 #define ACC_ICM20689_ALIGN       CW90_DEG
 //------MPU6000
 #define MPU6000_CS_PIN           PB2
 #define MPU6000_SPI_INSTANCE     SPI1
+=======
+>>>>>>> betaflight/4.0.x-maintenance
 
+//------MPU6000
 #define USE_GYRO_SPI_MPU6000
-#define GYRO_MPU6000_ALIGN      CW90_DEG
-
 #define USE_ACC_SPI_MPU6000
-#define ACC_MPU6000_ALIGN       CW90_DEG
 
 //Baro & MAG-------------------------------
 #define USE_I2C
@@ -133,7 +145,9 @@
 
 //ADC ----------------------------------------------
 #define USE_ADC
-#define ADC1_DMA_STREAM         DMA2_Stream0
+#define ADC_INSTANCE         ADC1  // Default added
+#define ADC1_DMA_OPT            0  // DMA 2 Stream 0 Channel 0 
+
 #define VBAT_ADC_PIN            PC0
 #define CURRENT_METER_ADC_PIN   PC1
 #define RSSI_ADC_PIN            PA0  //TIM5_CH1 & UART4_TX & TELEMETRY & FPORT

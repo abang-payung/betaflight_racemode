@@ -18,50 +18,86 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "platform.h"
+
 #include "drivers/io.h"
 #include "timer.h"
+
 #ifdef USE_TIMER_MGMT
 #include "pg/timerio.h"
 #endif
 
-uint8_t timerIndexByTag(ioTag_t ioTag)
-{
 #ifdef USE_TIMER_MGMT
+timerIOConfig_t *timerIoConfigByTag(ioTag_t ioTag)
+{
+    for (unsigned i = 0; i < MAX_TIMER_PINMAP_COUNT; i++) {
+        if (timerIOConfig(i)->ioTag == ioTag) {
+            return timerIOConfigMutable(i);
+        }
+    }
+    UNUSED(ioTag);
+    return NULL;
+}
+
+static uint8_t timerIndexByTag(ioTag_t ioTag)
+{
     for (unsigned i = 0; i < MAX_TIMER_PINMAP_COUNT; i++) {
         if (timerIOConfig(i)->ioTag == ioTag) {
             return timerIOConfig(i)->index;
         }
     }
-#else
-    UNUSED(ioTag);
-#endif
     return 0;
+}
+
+const timerHardware_t *timerGetByTagAndIndex(ioTag_t ioTag, unsigned timerIndex)
+{
+
+    if (!ioTag || !timerIndex) {
+        return NULL;
+    }
+
+    uint8_t index = 1;
+    for (unsigned i = 0; i < TIMER_CHANNEL_COUNT; i++) {
+        if (TIMER_HARDWARE[i].tag == ioTag) {
+            if (index == timerIndex) {
+                return &TIMER_HARDWARE[i];
+            }
+            ++index;
+        }
+    }
+
+    return NULL;
 }
 
 const timerHardware_t *timerGetByTag(ioTag_t ioTag)
 {
-    if (!ioTag) {
-        return NULL;
-    }
-
     uint8_t timerIndex = timerIndexByTag(ioTag);
-    uint8_t index = 1;
 
-    for (int i = 0; i < (int)USABLE_TIMER_CHANNEL_COUNT; i++) {
-        if (timerHardware[i].tag == ioTag) {
-            if (index == timerIndex || timerIndex == 0) {                
-                return &timerHardware[i];
-            }
-            index++;
+    return timerGetByTagAndIndex(ioTag, timerIndex);
+}
+
+#else
+
+const timerHardware_t *timerGetByTag(ioTag_t ioTag)
+{
+#if TIMER_CHANNEL_COUNT > 0
+    for (unsigned i = 0; i < TIMER_CHANNEL_COUNT; i++) {
+        if (TIMER_HARDWARE[i].tag == ioTag) {
+            return &TIMER_HARDWARE[i];
         }
     }
+#else
+    UNUSED(ioTag);
+#endif
     return NULL;
 }
+#endif
 
 ioTag_t timerioTagGetByUsage(timerUsageFlag_e usageFlag, uint8_t index)
 {
+#if !defined(USE_UNIFIED_TARGET) && USABLE_TIMER_CHANNEL_COUNT > 0
     uint8_t currentIndex = 0;
-    for (int i = 0; i < (int)USABLE_TIMER_CHANNEL_COUNT; i++) {
+    for (unsigned i = 0; i < USABLE_TIMER_CHANNEL_COUNT; i++) {
         if ((timerHardware[i].usageFlags & usageFlag) == usageFlag) {
             if (currentIndex == index) {
                 return timerHardware[i].tag;
@@ -69,5 +105,9 @@ ioTag_t timerioTagGetByUsage(timerUsageFlag_e usageFlag, uint8_t index)
             currentIndex++;
         }
     }
+#else
+    UNUSED(usageFlag);
+    UNUSED(index);
+#endif
     return IO_TAG_NONE;
 }

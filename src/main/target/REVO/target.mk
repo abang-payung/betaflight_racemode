@@ -1,6 +1,6 @@
 F405_TARGETS   += $(TARGET)
 ifeq ($(TARGET), AIRBOTF4SD)
-FEATURES       = VCP SDCARD
+FEATURES       = VCP SDCARD_SPI
 else
 FEATURES       = VCP ONBOARDFLASH
 endif
@@ -14,4 +14,9 @@ TARGET_SRC = \
             drivers/barometer/barometer_bmp280.c \
             drivers/compass/compass_hmc5883l.c \
             drivers/compass/compass_qmc5883l.c \
+<<<<<<< HEAD
+=======
+            drivers/compass/compass_ak8963.c \
+            drivers/compass/compass_ak8975.c \
+>>>>>>> betaflight/4.0.x-maintenance
             drivers/max7456.c

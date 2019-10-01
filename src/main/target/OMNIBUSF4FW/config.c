@@ -33,10 +33,17 @@
 
 static targetSerialPortFunction_t targetSerialPortFunction[] = {
 #ifdef OMNIBUSF4V6
+<<<<<<< HEAD
     { SERIAL_PORT_USART6, FUNCTION_RX_SERIAL },
 #else
     { SERIAL_PORT_USART1, FUNCTION_RX_SERIAL },
     { SERIAL_PORT_UART4,  FUNCTION_ESC_SENSOR },
+=======
+    { SERIAL_PORT_USART6, FUNCTION_RX_SERIAL },   
+#else
+    { SERIAL_PORT_USART1, FUNCTION_RX_SERIAL },
+    { SERIAL_PORT_UART4,  FUNCTION_ESC_SENSOR },    
+>>>>>>> betaflight/4.0.x-maintenance
 #endif
 };
 

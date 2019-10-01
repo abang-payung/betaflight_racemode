@@ -32,6 +32,7 @@
 #define TARGET_BOARD_IDENTIFIER "SRF3"
 #endif
 
+<<<<<<< HEAD
 // Removed to make the firmware fit into flash (in descending order of priority):
 //#undef USE_GYRO_OVERFLOW_CHECK
 //#undef USE_GYRO_LPF2
@@ -66,6 +67,8 @@
 #undef USE_LED_STRIP
 #endif
 
+=======
+>>>>>>> betaflight/4.0.x-maintenance
 #if defined(ZCOREF3)
 
 #define LED0_PIN                PB8
@@ -81,7 +84,8 @@
 #endif
 
 #define USE_EXTI
-#define MPU_INT_EXTI            PC13
+#define USE_GYRO_EXTI
+#define GYRO_1_EXTI_PIN          PC13
 #define USE_MPU_DATA_READY_SIGNAL
 #define ENSURE_MPU_DATA_READY_IS_LOW
 
@@ -94,21 +98,19 @@
 
 #if defined(FLIP32F3OSD)
 #define USE_GYRO_MPU6500
-#define GYRO_MPU6500_ALIGN CW270_DEG
+#define GYRO_1_ALIGN            CW270_DEG
 
 #define USE_ACC_MPU6500
-#define ACC_MPU6500_ALIGN CW270_DEG
+#define ACC_1_ALIGN             CW270_DEG
 
 #elif defined(ZCOREF3)
-#define USE_GYRO
 #define USE_GYRO_MPU6500
 #define USE_GYRO_SPI_MPU6500
-#define GYRO_MPU6500_ALIGN      CW180_DEG
+#define GYRO_1_ALIGN            CW180_DEG
 
-#define USE_ACC
 #define USE_ACC_MPU6500
 #define USE_ACC_SPI_MPU6500
-#define ACC_MPU6500_ALIGN       CW180_DEG
+#define ACC_1_ALIGN             CW180_DEG
 
 #define USE_SPI_DEVICE_1 // PB9,3,4,5 on AF5 SPI1 (MPU)
 
@@ -117,26 +119,32 @@
 #define SPI1_MISO_PIN           PB4
 #define SPI1_MOSI_PIN           PB5
 
-#define MPU6500_CS_PIN          PB9
-#define MPU6500_SPI_INSTANCE    SPI1
+#define GYRO_1_CS_PIN           PB9
+#define GYRO_1_SPI_INSTANCE     SPI1
 
 #elif defined(IRCSYNERGYF3)
+<<<<<<< HEAD
 #define USE_GYRO
+=======
+>>>>>>> betaflight/4.0.x-maintenance
 #define USE_GYRO_SPI_MPU6000
-#define GYRO_MPU6000_ALIGN      CW270_DEG
+#define GYRO_1_ALIGN            CW270_DEG
 
+<<<<<<< HEAD
 #define USE_ACC
+=======
+>>>>>>> betaflight/4.0.x-maintenance
 #define USE_ACC_SPI_MPU6000
-#define ACC_MPU6000_ALIGN       CW270_DEG
+#define ACC_1_ALIGN             CW270_DEG
 
-#define MPU6000_CS_PIN           PB12
-#define MPU6000_SPI_INSTANCE     SPI2
+#define GYRO_1_CS_PIN           PB12
+#define GYRO_1_SPI_INSTANCE     SPI2
 #else
 #define USE_GYRO_MPU6050
-#define GYRO_MPU6050_ALIGN      CW270_DEG
+#define GYRO_1_ALIGN            CW270_DEG
 
 #define USE_ACC_MPU6050
-#define ACC_MPU6050_ALIGN       CW270_DEG
+#define ACC_1_ALIGN             CW270_DEG
 #endif
 
 #if defined(FLIP32F3OSD)

@@ -48,12 +48,13 @@ const char *armingDisableFlagNames[]= {
     "CALIB",
     "CLI",
     "CMS",
-    "OSD",
     "BST",
     "MSP",
     "PARALYZE",
     "GPS",
-    "ARMSWITCH"
+    "RESCUE SW",
+    "RPMFILTER",
+    "ARMSWITCH",
 };
 
 static armingDisableFlags_e armingDisableFlags = 0;

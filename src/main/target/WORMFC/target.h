@@ -61,39 +61,63 @@
 // MPU6500 interrupt
 #define USE_EXTI
 #if defined(PIRXF4)
+<<<<<<< HEAD
 #define MPU_INT_EXTI            PC5
 #else
 #define MPU_INT_EXTI            PC4
+=======
+#define GYRO_1_EXTI_PIN         PC5
+#else
+#define GYRO_1_EXTI_PIN         PC4
+>>>>>>> betaflight/4.0.x-maintenance
 #endif
 #define USE_MPU_DATA_READY_SIGNAL
 //#define DEBUG_MPU_DATA_READY_INTERRUPT
 
 #if defined(PIRXF4)
+<<<<<<< HEAD
 #define MPU6500_CS_PIN          PC4
 #else
 #define MPU6500_CS_PIN          PA4
 #endif
 #define MPU6500_SPI_INSTANCE    SPI1
+=======
+#define GYRO_1_CS_PIN          PC4
+#else
+#define GYRO_1_CS_PIN          PA4
+#endif
+#define GYRO_1_SPI_INSTANCE    SPI1
+>>>>>>> betaflight/4.0.x-maintenance
 
 // ACC section -- start
 #define USE_ACC
-#define USE_ACC_MPU6500
 #define USE_ACC_SPI_MPU6500
 #if defined(PIRXF4)
+<<<<<<< HEAD
 #define ACC_MPU6500_ALIGN       CW0_DEG
 #else
 #define ACC_MPU6500_ALIGN       CW180_DEG_FLIP
+=======
+#define ACC_1_ALIGN       CW0_DEG
+#else
+#define ACC_1_ALIGN       CW180_DEG_FLIP
+>>>>>>> betaflight/4.0.x-maintenance
 #endif
 // ACC section -- end
 
 // GYRO section -- start
 #define USE_GYRO
-#define USE_GYRO_MPU6500
 #define USE_GYRO_SPI_MPU6500
 #if defined(PIRXF4)
+<<<<<<< HEAD
 #define GYRO_MPU6500_ALIGN      CW0_DEG
 #else
 #define GYRO_MPU6500_ALIGN      CW180_DEG_FLIP
+=======
+#define GYRO_1_ALIGN      CW0_DEG
+#else
+#define GYRO_1_ALIGN      CW180_DEG_FLIP
+>>>>>>> betaflight/4.0.x-maintenance
 #endif
 // GYRO section -- end
 
@@ -101,8 +125,13 @@
 #if !defined(PIRXF4)
 #define USE_BARO
 #define USE_BARO_SPI_LPS
+<<<<<<< HEAD
 #define LPS_SPI_INSTANCE SPI3
 #define LPS_CS_PIN PB8
+=======
+#define BARO_SPI_INSTANCE       SPI3
+#define BARO_CS_PIN             PB8
+>>>>>>> betaflight/4.0.x-maintenance
 #endif
 
 //UARTs
@@ -178,7 +207,10 @@
 #define USE_ADC
 #define DEFAULT_VOLTAGE_METER_SOURCE VOLTAGE_METER_ADC
 #define DEFAULT_CURRENT_METER_SOURCE CURRENT_METER_ADC
+<<<<<<< HEAD
 #define BOARD_HAS_VOLTAGE_DIVIDER
+=======
+>>>>>>> betaflight/4.0.x-maintenance
 #if defined(PIRXF4)
 #define VBAT_ADC_PIN            PC2
 #define RSSI_ADC_PIN            PC1
@@ -196,7 +228,8 @@
 //SD CARD
 #define USE_SDCARD
 #define USE_SDCARD_SDIO
-#define SDIO_DMA          DMA2_Stream3
+
+#define SDCARD_SDIO_DMA_OPT     0  // DMA 2 Stream 3 Channel 4
 #define SDCARD_SPI_CS_PIN NONE //This is not used on SDIO, has to be kept for now to keep compiler happy
 #if defined(PIRXF4)
 #define SDCARD_DETECT_PIN PC15
@@ -210,4 +243,4 @@
 #define TARGET_IO_PORTD         (BIT(2))
 
 #define USABLE_TIMER_CHANNEL_COUNT 7
-#define USED_TIMERS             ( TIM_N(1) | TIM_N(2) | TIM_N(3) | TIM_N(4) | TIM_N(5) | TIM_N(8))
+#define USED_TIMERS             ( TIM_N(1) | TIM_N(2) | TIM_N(3) | TIM_N(4) )

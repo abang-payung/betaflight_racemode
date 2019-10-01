@@ -49,12 +49,18 @@
 #define SPI1_MOSI_PIN           PA7
 
 #define USE_EXTI
+<<<<<<< HEAD
 #define MPU_INT_EXTI            PC4
+=======
+#define USE_GYRO_EXTI
+#define GYRO_1_EXTI_PIN         PC4
+>>>>>>> betaflight/4.0.x-maintenance
 #define USE_MPU_DATA_READY_SIGNAL
 
 #define USE_GYRO
 #define USE_ACC
 
+<<<<<<< HEAD
 #define ICM20689_CS_PIN          PA4 
 #define ICM20689_SPI_INSTANCE    SPI1
 
@@ -72,6 +78,23 @@
 
 #define USE_ACC_SPI_MPU6000
 #define ACC_MPU6000_ALIGN       CW270_DEG
+=======
+#define GYRO_1_CS_PIN           PA4
+#define GYRO_1_SPI_INSTANCE     SPI1
+
+#define USE_GYRO_SPI_ICM20689
+#define GYRO_1_ALIGN      CW270_DEG
+
+#define USE_ACC_SPI_ICM20689
+#define ACC_1_ALIGN       CW270_DEG
+
+#define GYRO_1_CS_PIN           PA4
+#define GYRO_1_SPI_INSTANCE     SPI1
+
+#define USE_GYRO_SPI_MPU6000
+
+#define USE_ACC_SPI_MPU6000
+>>>>>>> betaflight/4.0.x-maintenance
 
 #define LED0_PIN                PC13
 
@@ -131,7 +154,13 @@
 #define MAX7456_SPI_CS_PIN      PA15 
 
 #define USE_ADC
+<<<<<<< HEAD
 #define ADC1_DMA_STREAM         DMA2_Stream0
+=======
+#define ADC_INSTANCE            ADC1  // Default added
+#define ADC1_DMA_OPT            0  // DMA 2 Stream 0 Channel 0 
+
+>>>>>>> betaflight/4.0.x-maintenance
 #define VBAT_ADC_PIN            PC1
 #define CURRENT_METER_ADC_PIN   PC2
 #define RSSI_ADC_PIN            PC0  
