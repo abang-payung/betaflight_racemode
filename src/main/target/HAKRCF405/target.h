@@ -86,7 +86,6 @@
 #define GYRO_1_ALIGN      CW270_DEG
 
 #define USE_ACC_SPI_ICM20689
-#define ACC_1_ALIGN       CW270_DEG
 
 #define GYRO_1_CS_PIN           PA4
 #define GYRO_1_SPI_INSTANCE     SPI1

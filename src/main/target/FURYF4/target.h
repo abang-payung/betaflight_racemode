@@ -56,7 +56,16 @@
 #define USE_ACC_SPI_MPU6000
 #define USE_ACC_SPI_MPU6500
 #define USE_ACC_SPI_ICM20689
-#define ACC_1_ALIGN             CW180_DEG
+
+#define USE_BARO
+#define USE_BARO_MS5611
+#define USE_BARO_BMP280
+#define MS5611_I2C_INSTANCE     I2CDEV_1
+
+#define USE_MAG
+#define USE_MAG_HMC5883
+#define USE_MAG_QMC5883
+#define USE_MAG_LIS3MDL
 
 #define USE_BARO
 #define USE_BARO_MS5611
@@ -67,8 +76,11 @@
 #define USE_MAX7456
 #define MAX7456_SPI_INSTANCE    SPI2
 #define MAX7456_SPI_CS_PIN      PB12
+<<<<<<< HEAD
 #define MAX7456_SPI_CLK         (SPI_CLOCK_STANDARD) // 10MHz
 #define MAX7456_RESTORE_CLK     (SPI_CLOCK_FAST)
+=======
+>>>>>>> betaflight/master
 
 #define ENABLE_BLACKBOX_LOGGING_ON_SPIFLASH_BY_DEFAULT
 

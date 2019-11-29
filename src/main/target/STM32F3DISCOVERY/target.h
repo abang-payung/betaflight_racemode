@@ -145,10 +145,13 @@
 #define MPU_I2C_INSTANCE        (I2CDEV_1)
 #define USE_ACC_LSM303DLHC
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define ACC_LSM303DLHC_ALIGN    CW0_DEG
 =======
 #define ACC_1_ALIGN             CW0_DEG
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master
 
 #define USE_FAKE_ACC
 //#define USE_ACC_ADXL345

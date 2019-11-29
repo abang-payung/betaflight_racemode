@@ -51,7 +51,6 @@
 
 // TODO
 #define GYRO_1_ALIGN           CW180_DEG
-#define ACC_1_ALIGN            CW180_DEG
 
 // MPU6000 interrupts
 #define USE_EXTI
@@ -110,8 +109,11 @@
 =======
 #warning Missing channel for F4/F7 spec dma 1 stream 4; DMA_OPT assumed as 0
 #define SPI2_TX_DMA_OPT                         0     // DMA 1 Stream 4 Channel unknown
+<<<<<<< HEAD
 #define SDCARD_DMA_CHANNEL                      DMA_Channel_0
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master
 #endif
 
 #define USE_VCP

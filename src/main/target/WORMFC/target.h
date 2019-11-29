@@ -92,6 +92,7 @@
 // ACC section -- start
 #define USE_ACC
 #define USE_ACC_SPI_MPU6500
+<<<<<<< HEAD
 #if defined(PIRXF4)
 <<<<<<< HEAD
 #define ACC_MPU6500_ALIGN       CW0_DEG
@@ -103,6 +104,8 @@
 #define ACC_1_ALIGN       CW180_DEG_FLIP
 >>>>>>> betaflight/4.0.x-maintenance
 #endif
+=======
+>>>>>>> betaflight/master
 // ACC section -- end
 
 // GYRO section -- start
@@ -201,8 +204,6 @@
 #define MAX7456_SPI_INSTANCE    SPI3
 #define MAX7456_SPI_CS_PIN      PC0
 #endif
-#define MAX7456_SPI_CLK         (SPI_CLOCK_STANDARD) // 10MHz
-#define MAX7456_RESTORE_CLK     (SPI_CLOCK_FAST)
 
 #define USE_ADC
 #define DEFAULT_VOLTAGE_METER_SOURCE VOLTAGE_METER_ADC

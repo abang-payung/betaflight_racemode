@@ -80,8 +80,11 @@
 
 #define USE_ACC
 #define USE_ACC_SPI_MPU6000
+<<<<<<< HEAD
 #define ACC_1_ALIGN             CW270_DEG
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master
 
 #define LED0_PIN                PC13
 

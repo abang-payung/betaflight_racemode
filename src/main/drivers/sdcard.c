@@ -67,14 +67,17 @@ sdcard_t sdcard;
 
 STATIC_ASSERT(sizeof(sdcardCSD_t) == 16, sdcard_csd_bitfields_didnt_pack_properly);
 
-void sdcardInsertionDetectDeinit(void)
+static void sdcardInsertionDetectInit(const sdcardConfig_t *config)
 {
-    if (sdcard.cardDetectPin) {
-        IOInit(sdcard.cardDetectPin, OWNER_FREE, 0);
-        IOConfigGPIO(sdcard.cardDetectPin, IOCFG_IN_FLOATING);
+    if (config->cardDetectTag) {
+        sdcard.cardDetectPin = IOGetByTag(config->cardDetectTag);
+        sdcard.detectionInverted = config->cardDetectInverted;
+    } else {
+        sdcard.cardDetectPin = IO_NONE;
+        sdcard.detectionInverted = false;
     }
-}
 
+<<<<<<< HEAD
 void sdcardInsertionDetectInit(const sdcardConfig_t *config)
 {
     if (config->cardDetectTag) {
@@ -85,6 +88,8 @@ void sdcardInsertionDetectInit(const sdcardConfig_t *config)
         sdcard.detectionInverted = false;
     }
 
+=======
+>>>>>>> betaflight/master
     if (sdcard.cardDetectPin) {
         IOInit(sdcard.cardDetectPin, OWNER_SDCARD_DETECT, 0);
         IOConfigGPIO(sdcard.cardDetectPin, IOCFG_IPU);
@@ -122,6 +127,8 @@ void sdcard_preInit(const sdcardConfig_t *config)
 
 void sdcard_init(const sdcardConfig_t *config)
 {
+    sdcardInsertionDetectInit(config);
+
     switch (config->mode) {
 #ifdef USE_SDCARD_SPI
     case SDCARD_MODE_SPI:

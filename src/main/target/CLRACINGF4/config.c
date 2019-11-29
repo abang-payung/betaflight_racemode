@@ -33,6 +33,10 @@
 #include "io/ledstrip.h"
 #include "fc/config.h"
 #include "pg/piniobox.h"
+<<<<<<< HEAD
+=======
+#include "pg/motor.h"
+>>>>>>> betaflight/master
 #include "common/axis.h"
 #include "sensors/barometer.h"
 #include "sensors/compass.h"

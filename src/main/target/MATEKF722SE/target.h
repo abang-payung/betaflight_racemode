@@ -43,12 +43,15 @@
 #define SPI1_MOSI_PIN           PA7
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define USE_DUAL_GYRO
 #define USE_EXTI
 #define GYRO_1_EXTI_PIN         PC4
 #define GYRO_2_EXTI_PIN         PC3
 #define MPU_INT_EXTI
 =======
+=======
+>>>>>>> betaflight/master
 #define USE_EXTI
 #define USE_GYRO_EXTI
 #define GYRO_1_EXTI_PIN         PC4
@@ -81,11 +84,13 @@
 =======
  
 #define GYRO_1_ALIGN            CW180_DEG_FLIP
-#define ACC_1_ALIGN             CW180_DEG_FLIP
 
 #define GYRO_2_ALIGN            CW90_DEG
+<<<<<<< HEAD
 #define ACC_2_ALIGN             CW90_DEG
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master
 
 #define USE_MPU_DATA_READY_SIGNAL
 #define ENSURE_MPU_DATA_READY_IS_LOW
@@ -125,8 +130,6 @@
 #define USE_MAX7456
 #define MAX7456_SPI_INSTANCE    SPI2
 #define MAX7456_SPI_CS_PIN      PB12
-#define MAX7456_SPI_CLK         (SPI_CLOCK_STANDARD)
-#define MAX7456_RESTORE_CLK     (SPI_CLOCK_FAST)
 
 // *************** SPI3 SD BLACKBOX****************
 

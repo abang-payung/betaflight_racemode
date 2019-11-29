@@ -129,7 +129,12 @@
 #define USE_I2C
 #define USE_I2C_DEVICE_1
 #define I2C1_SCL                PB8
+<<<<<<< HEAD
 #define I2C1_SDA                PB9 
+=======
+#define I2C1_SDA                PB9
+#define I2C_DEVICE              (I2CDEV_1)
+>>>>>>> betaflight/master
 
 // *************** ADC *****************************
 #define USE_ADC
@@ -142,7 +147,10 @@
 #define DEFAULT_FEATURES        (FEATURE_OSD | FEATURE_TELEMETRY | FEATURE_SOFTSERIAL | FEATURE_AIRMODE)
 
 #define USE_ESCSERIAL
+<<<<<<< HEAD
 #define USE_SERIAL_4WAY_BLHELI_INTERFACE
+=======
+>>>>>>> betaflight/master
 
 #define TARGET_IO_PORTA         0xffff
 #define TARGET_IO_PORTB         0xffff

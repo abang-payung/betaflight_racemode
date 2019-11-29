@@ -37,18 +37,31 @@
 #include "pg/gyrodev.h"
 
 void targetConfiguration(void)
+<<<<<<< HEAD
 {
     if (hardwareRevision == FF_RACEPIT_REV_1) {
         gyroDeviceConfigMutable(0)->align = CW180_DEG;
     }
     else {
         gyroDeviceConfigMutable(0)->align = CW90_DEG_FLIP;
+=======
+{	
+    if (hardwareRevision == FF_RACEPIT_REV_1) {
+        gyroDeviceConfigMutable(0)->alignment = CW180_DEG;
+    }
+    else {
+        gyroDeviceConfigMutable(0)->alignment = CW90_DEG_FLIP;
+>>>>>>> betaflight/master
     }
 
     telemetryConfigMutable()->halfDuplex = false;
 
     pinioConfigMutable()->config[1] = PINIO_CONFIG_OUT_INVERTED | PINIO_CONFIG_MODE_OUT_PP;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> betaflight/master
     pinioBoxConfigMutable()->permanentId[0] = 40;
     pinioBoxConfigMutable()->permanentId[1] = 41;
 }

@@ -94,7 +94,6 @@
 
 #if defined(OMNIBUSF4SD)
 #define GYRO_1_ALIGN            CW270_DEG
-#define ACC_1_ALIGN             CW270_DEG
 #elif defined(XRACERF4) || defined(EXUAVF4PRO)
 <<<<<<< HEAD
 #define GYRO_MPU6000_ALIGN       CW90_DEG
@@ -104,14 +103,15 @@
 #define ACC_MPU6000_ALIGN        CW0_DEG_FLIP
 =======
 #define GYRO_1_ALIGN            CW90_DEG
-#define ACC_1_ALIGN             CW90_DEG
 #elif defined(SYNERGYF4)
 #define GYRO_1_ALIGN            CW0_DEG_FLIP
+<<<<<<< HEAD
 #define ACC_1_ALIGN             CW0_DEG_FLIP
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master
 #else
 #define GYRO_1_ALIGN            CW180_DEG
-#define ACC_1_ALIGN             CW180_DEG
 #endif
 
 // Support for iFlight OMNIBUS F4 V3
@@ -127,9 +127,7 @@
 // Dummy defines
 #define GYRO_2_SPI_INSTANCE     GYRO_1_SPI_INSTANCE
 #define GYRO_2_CS_PIN           NONE
-#define GYRO_2_ALIGN            ALIGN_DEFAULT
 #define GYRO_2_EXTI_PIN         NONE
-#define ACC_2_ALIGN             ALIGN_DEFAULT
 
 >>>>>>> betaflight/4.0.x-maintenance
 #if !defined(SYNERGYF4) //No mag sensor on SYNERGYF4
@@ -162,8 +160,6 @@
 #define USE_MAX7456
 #define MAX7456_SPI_INSTANCE    SPI3
 #define MAX7456_SPI_CS_PIN      PA15
-#define MAX7456_SPI_CLK         (SPI_CLOCK_STANDARD) // 10MHz
-#define MAX7456_RESTORE_CLK     (SPI_CLOCK_FAST)
 
 // Globally configure flashfs and drivers for various flash chips
 #define USE_FLASHFS

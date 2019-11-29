@@ -28,6 +28,10 @@
 
 #include "drivers/io.h"
 #include "pg/rx.h"
+<<<<<<< HEAD
+=======
+#include "pg/motor.h"
+>>>>>>> betaflight/master
 #include "rx/rx.h"
 #include "io/serial.h"
 
@@ -36,8 +40,13 @@
 
 #include "sensors/battery.h"
 
+<<<<<<< HEAD
 #include "flight/mixer.h"
 #include "flight/pid.h"
+=======
+#include "flight/pid.h"
+#include "flight/mixer.h"
+>>>>>>> betaflight/master
 
 #define CURRENT_SCALE 118
 
@@ -50,7 +59,11 @@ void targetConfiguration(void)
 {
 	pinioConfigMutable()->config[0] = PINIO_CONFIG_MODE_OUT_PP | PINIO_CONFIG_OUT_INVERTED;
     pinioBoxConfigMutable()->permanentId[0] = 40;
+<<<<<<< HEAD
     motorConfigMutable()->dev.motorPwmProtocol = PWM_TYPE_DSHOT1200;
+=======
+    motorConfigMutable()->dev.motorPwmProtocol = PWM_TYPE_DSHOT600;
+>>>>>>> betaflight/master
     pidConfigMutable()->pid_process_denom = 1;
     currentSensorADCConfigMutable()->scale = CURRENT_SCALE;
     featureDisable(FEATURE_SOFTSERIAL);

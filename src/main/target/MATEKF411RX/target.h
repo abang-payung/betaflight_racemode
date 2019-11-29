@@ -73,6 +73,7 @@
 #endif
 #define USE_ACC
 #define USE_ACC_SPI_MPU6000
+<<<<<<< HEAD
 #if defined(CRAZYBEEF4FS) || defined(CRAZYBEEF4FR) || defined(CRAZYBEEF4DX)
 <<<<<<< HEAD
 #define ACC_MPU6000_ALIGN       CW90_DEG
@@ -84,6 +85,8 @@
 #define ACC_1_ALIGN             CW180_DEG
 >>>>>>> betaflight/4.0.x-maintenance
 #endif
+=======
+>>>>>>> betaflight/master
 // *************** SPI2 OSD *****************************
 #define USE_SPI_DEVICE_2
 #define SPI2_SCK_PIN            PB13
@@ -140,6 +143,7 @@
 #define USE_RX_SPI
 #define RX_SPI_INSTANCE         SPI3
 
+<<<<<<< HEAD
 #define RX_FRSKY_SPI_DISABLE_CHIP_DETECTION
 #define RX_FRSKY_SPI_GDO_0_PIN     PC14
 #define RX_FRSKY_SPI_LED_PIN       PB9
@@ -169,6 +173,8 @@
 #define USE_RX_SPI
 #define RX_SPI_INSTANCE         SPI3
 
+=======
+>>>>>>> betaflight/master
 #define RX_SPI_BIND_PIN         PB2
 
 #define DEFAULT_RX_FEATURE      FEATURE_RX_SPI

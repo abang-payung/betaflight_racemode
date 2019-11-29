@@ -24,10 +24,8 @@
 
 #include "build/version.h"
 
-// Targets with built-in vtx do not need external vtx
-#if defined(USE_VTX_RTC6705) && !defined(VTX_RTC6705_OPTIONAL)
-#undef USE_VTX_SMARTAUDIO
-#undef USE_VTX_TRAMP
+#if defined(USE_VTX_RTC6705_SOFTSPI)
+#define USE_VTX_RTC6705
 #endif
 
 #ifndef USE_DSHOT
@@ -64,6 +62,11 @@
 #undef USE_VARIO
 #endif
 
+#if defined(USE_BARO) && !defined(BARO_EOC_PIN)
+#define BARO_EOC_PIN NONE
+#endif
+
+
 #if !defined(USE_SERIAL_RX)
 #undef USE_SERIALRX_CRSF
 #undef USE_SERIALRX_IBUS
@@ -93,7 +96,12 @@
 
 #if !defined(USE_SERIALRX_CRSF)
 #undef USE_TELEMETRY_CRSF
+<<<<<<< HEAD
 <<<<<<< HEAD:src/main/target/common_fc_post.h
+=======
+#undef USE_CRSF_LINK_STATISTICS
+#undef USE_RX_RSSI_DBM
+>>>>>>> betaflight/master
 #endif
 
 #if !defined(USE_TELEMETRY_CRSF) || !defined(USE_CMS)
@@ -150,6 +158,7 @@
 #undef USE_VTX_CONTROL
 #undef USE_VTX_TRAMP
 #undef USE_VTX_SMARTAUDIO
+#undef USE_VTX_TABLE
 #endif
 
 #if defined(USE_RX_FRSKY_SPI_D) || defined(USE_RX_FRSKY_SPI_X)
@@ -196,9 +205,15 @@
 #if defined(USE_FLASH_W25M512)
 #define USE_FLASH_W25M
 #define USE_FLASH_M25P16
+#define USE_FLASH_W25M
 #endif
 
-#if defined(USE_FLASH_M25P16)
+#if defined(USE_FLASH_W25M02G)
+#define USE_FLASH_W25N01G
+#define USE_FLASH_W25M
+#endif
+
+#if defined(USE_FLASH_M25P16) || defined(USE_FLASH_W25N01G)
 #define USE_FLASH_CHIP
 #endif
 
@@ -233,6 +248,7 @@
 #define USE_RX_XN297
 #endif
 
+<<<<<<< HEAD
 <<<<<<< HEAD:src/main/target/common_fc_post.h
 #ifndef USE_BLACKBOX
 #undef USE_USB_MSC
@@ -241,6 +257,8 @@
 #define USE_CONFIGURATION_STATE
 #endif
 
+=======
+>>>>>>> betaflight/master
 // Setup crystal frequency on F4 for backward compatibility
 // Should be set to zero for generic targets to ensure USB is working
 // when unconfigured for targets with non-standard crystal.
@@ -262,6 +280,13 @@
 #endif
 #endif
 
+<<<<<<< HEAD
+=======
+#ifndef USE_BLACKBOX
+#undef USE_USB_MSC
+#endif
+
+>>>>>>> betaflight/master
 #if (!defined(USE_FLASHFS) || !defined(USE_RTC_TIME) || !defined(USE_USB_MSC) || !defined(USE_PERSISTENT_OBJECTS))
 #undef USE_PERSISTENT_MSC_RTC
 >>>>>>> betaflight/4.0.x-maintenance:src/main/target/common_post.h
@@ -274,6 +299,10 @@
 #endif
 <<<<<<< HEAD:src/main/target/common_fc_post.h
 =======
+
+#if !defined(USE_PWM_OUTPUT)
+#undef USE_SERIAL_4WAY_BLHELI_INTERFACE // implementation requires USE_PWM_OUTPUT to find motor outputs.
+#endif
 
 #if !defined(USE_LED_STRIP)
 #undef USE_LED_STRIP_STATUS_MODE
@@ -288,17 +317,18 @@
 #undef USE_GYRO_DATA_ANALYSE
 #endif
 
-#ifndef USE_DSHOT
-#undef USE_DSHOT_TELEMETRY
-#undef USE_RPM_FILTER
-#endif
-
 #ifndef USE_CMS
 #undef USE_CMS_FAILSAFE_MENU
 #endif
 
+#ifndef USE_DSHOT
+#undef USE_DSHOT_TELEMETRY
+#undef USE_DSHOT_BITBANG
+#endif
+
 #ifndef USE_DSHOT_TELEMETRY
 #undef USE_RPM_FILTER
+#undef USE_DSHOT_TELEMETRY_STATS
 #endif
 
 #if !defined(USE_BOARD_INFO)
@@ -308,6 +338,10 @@
 #if !defined(USE_ACC)
 #undef USE_GPS_RESCUE
 #undef USE_ACRO_TRAINER
+#endif
+
+#if (!defined(USE_GPS_RESCUE) || !defined(USE_CMS_FAILSAFE_MENU))
+#undef USE_CMS_GPS_RESCUE_MENU
 #endif
 
 #ifndef USE_BEEPER
@@ -340,12 +374,49 @@
 #undef USE_RANGEFINDER_TF
 #endif
 
+#ifndef USE_GPS_RESCUE
+#undef USE_CMS_GPS_RESCUE_MENU
+#endif
+
 // TODO: Remove this once HAL support is fixed for ESCSERIAL
 #ifdef STM32F7
 #undef USE_ESCSERIAL
 #endif
 
+<<<<<<< HEAD
 #ifndef USE_ITERM_RELAX
 #undef USE_ABSOLUTE_CONTROL
 #endif
 >>>>>>> betaflight/4.0.x-maintenance:src/main/target/common_post.h
+=======
+#if defined(CONFIG_IN_RAM) || defined(CONFIG_IN_FILE) || defined(CONFIG_IN_EXTERNAL_FLASH) || defined(CONFIG_IN_SDCARD)
+#ifndef EEPROM_SIZE
+#define EEPROM_SIZE     4096
+#endif
+extern uint8_t eepromData[EEPROM_SIZE];
+#define __config_start (*eepromData)
+#define __config_end (*ARRAYEND(eepromData))
+#else
+#ifndef CONFIG_IN_FLASH
+#define CONFIG_IN_FLASH
+#endif
+extern uint8_t __config_start;   // configured via linker script when building binaries.
+extern uint8_t __config_end;
+#endif
+
+#if defined(USE_EXST) && !defined(RAMBASED)
+#define USE_FLASH_BOOT_LOADER
+#endif
+
+#if !defined(USE_RPM_FILTER)
+#undef USE_DYN_IDLE
+#endif
+
+#ifndef USE_ITERM_RELAX
+#undef USE_ABSOLUTE_CONTROL
+#endif
+
+#if defined(USE_CUSTOM_DEFAULTS)
+#define USE_CUSTOM_DEFAULTS_ADDRESS
+#endif
+>>>>>>> betaflight/master

@@ -130,7 +130,10 @@
 
 #define USE_ESCSERIAL
 #define ESCSERIAL_TIMER_TX_PIN  PA3
+<<<<<<< HEAD
 #define USE_SERIAL_4WAY_BLHELI_INTERFACE
+=======
+>>>>>>> betaflight/master
 
 #define TARGET_IO_PORTA         0xffff
 #define TARGET_IO_PORTB         0xffff

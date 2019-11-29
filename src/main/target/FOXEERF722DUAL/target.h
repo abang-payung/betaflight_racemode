@@ -31,11 +31,14 @@
 #define BEEPER_INVERTED
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define CAMERA_CONTROL_PIN      PB3
 
 #define USE_DUAL_GYRO
 =======
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master
 #define USE_EXTI
 #define USE_GYRO_EXTI
 #define GYRO_1_EXTI_PIN         PC4
@@ -69,11 +72,13 @@
 #define ACC_2_ALIGN                 ACC_MPU6500_2_ALIGN
 =======
 #define GYRO_1_ALIGN                CW270_DEG
-#define ACC_1_ALIGN                 CW270_DEG
 
 #define GYRO_2_ALIGN                CW180_DEG
+<<<<<<< HEAD
 #define ACC_2_ALIGN                 CW180_DEG
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master
 
 #define GYRO_CONFIG_USE_GYRO_DEFAULT GYRO_CONFIG_USE_GYRO_1 
 

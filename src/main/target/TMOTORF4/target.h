@@ -25,6 +25,7 @@
 
 #define USE_TARGET_CONFIG
 
+#define CAMERA_CONTROL_PIN      PC9
 #define LED0_PIN                PC5
 
 #define USE_BEEPER
@@ -34,21 +35,27 @@
 #define ENABLE_DSHOT_DMAR       true
 
 #define USE_EXTI
-#define USE_GYRO_EXTI
-#define GYRO_1_EXTI_PIN         PC4
+#define MPU_INT_EXTI            PC4
 #define USE_MPU_DATA_READY_SIGNAL
 
 #define USE_GYRO
 #define USE_GYRO_SPI_MPU6000
 #define USE_GYRO_SPI_MPU6500
-#define GYRO_1_CS_PIN          SPI1_NSS_PIN
-#define GYRO_1_SPI_INSTANCE    SPI1
-#define GYRO_1_ALIGN           CW0_DEG
+#define MPU6000_CS_PIN          SPI1_NSS_PIN
+#define MPU6000_SPI_INSTANCE    SPI1
+#define MPU6500_CS_PIN          SPI1_NSS_PIN
+#define MPU6500_SPI_INSTANCE    SPI1
+#define GYRO_MPU6000_ALIGN      CW0_DEG
+#define GYRO_MPU6500_ALIGN      CW0_DEG
 
 #define USE_ACC
 #define USE_ACC_SPI_MPU6000
 #define USE_ACC_SPI_MPU6500
-#define ACC_1_ALIGN            CW0_DEG
+<<<<<<< HEAD:src/main/target/SPEDIXF4/target.h
+#define ACC_MPU6000_ALIGN       CW0_DEG
+#define ACC_MPU6500_ALIGN       CW0_DEG
+=======
+>>>>>>> betaflight/master:src/main/target/TMOTORF4/target.h
 
 #define USE_BARO
 #define USE_BARO_SPI_BMP280
@@ -64,8 +71,6 @@
 #define USE_MAX7456
 #define MAX7456_SPI_INSTANCE    SPI2
 #define MAX7456_SPI_CS_PIN      SPI2_NSS_PIN
-#define MAX7456_SPI_CLK         ( SPI_CLOCK_STANDARD )
-#define MAX7456_RESTORE_CLK     ( SPI_CLOCK_FAST )
 
 #define USE_FLASHFS
 #define USE_FLASH_M25P16

@@ -51,6 +51,7 @@
 
 #define USE_EXTI
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define MPU_INT_EXTI            PB2
 #define USE_MPU_DATA_READY_SIGNALW
 =======
@@ -58,10 +59,16 @@
 #define GYRO_1_EXTI_PIN         PB2
 #define USE_MPU_DATA_READY_SIGNAL
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+#define USE_GYRO_EXTI
+#define GYRO_1_EXTI_PIN         PB2
+#define USE_MPU_DATA_READY_SIGNAL
+>>>>>>> betaflight/master
 
 #define USE_GYRO
 #define USE_ACC
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 #define ICM20689_CS_PIN          PA4 
 #define ICM20689_SPI_INSTANCE    SPI1
@@ -81,6 +88,8 @@
 #define USE_ACC_SPI_MPU6000
 #define ACC_MPU6000_ALIGN       CW270_DEG
 =======
+=======
+>>>>>>> betaflight/master
 #define GYRO_1_CS_PIN           PA4
 #define GYRO_1_SPI_INSTANCE     SPI1
 
@@ -92,7 +101,10 @@
 #define USE_GYRO_SPI_MPU6000
 
 #define USE_ACC_SPI_MPU6000
+<<<<<<< HEAD
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master
 
 
 #define LED0_PIN                PC13
@@ -132,9 +144,12 @@
 
 #define USE_ADC
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define ADC1_DMA_STREAM         DMA2_Stream0
 =======
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master
 #define VBAT_ADC_PIN            PA0
 #define CURRENT_METER_ADC_PIN   PA1
 
@@ -151,9 +166,12 @@
 #define USE_ESCSERIAL
 #define ESCSERIAL_TIMER_TX_PIN PA3
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define USE_SERIAL_4WAY_BLHELI_INTERFACE
 =======
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master
 
 #define INVERTER_PIN_UART1      PB4 
 
@@ -166,8 +184,11 @@
 #define USABLE_TIMER_CHANNEL_COUNT 8
 #define USED_TIMERS             (TIM_N(1)|TIM_N(2)|TIM_N(3)|TIM_N(4))
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 
 =======
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+>>>>>>> betaflight/master

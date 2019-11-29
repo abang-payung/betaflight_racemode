@@ -107,8 +107,11 @@ extern sdcard_t sdcard;
 
 STATIC_ASSERT(sizeof(sdcardCSD_t) == 16, sdcard_csd_bitfields_didnt_pack_properly);
 
+<<<<<<< HEAD
 void sdcardInsertionDetectInit(const sdcardConfig_t *config);
 void sdcardInsertionDetectDeinit(void);
+=======
+>>>>>>> betaflight/master
 bool sdcard_isInserted(void);
 
 typedef struct sdcardVTable_s {

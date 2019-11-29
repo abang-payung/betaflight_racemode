@@ -60,7 +60,6 @@
 
 #define USE_ACC
 
-#define ACC_1_ALIGN       CW180_DEG
 #define GYRO_1_ALIGN       CW180_DEG
 
 #define USE_BARO

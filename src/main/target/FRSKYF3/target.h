@@ -74,7 +74,6 @@
 
 #define USE_ACC
 #define USE_ACC_SPI_MPU6000
-#define ACC_1_ALIGN             CW270_DEG
 #else
 #define USE_GYRO
 #define USE_GYRO_MPU6050
@@ -82,7 +81,6 @@
 
 #define USE_ACC
 #define USE_ACC_MPU6050
-#define ACC_1_ALIGN             CW270_DEG
 #endif
 
 #define USE_VCP
@@ -115,8 +113,6 @@
 #define USE_MAX7456
 #define MAX7456_SPI_INSTANCE    SPI2
 #define MAX7456_SPI_CS_PIN      PB4
-#define MAX7456_SPI_CLK         (SPI_CLOCK_STANDARD) // 10MHz
-#define MAX7456_RESTORE_CLK     (SPI_CLOCK_FAST)
 
 #define USE_SPI
 #define USE_SPI_DEVICE_2

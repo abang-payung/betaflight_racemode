@@ -46,11 +46,15 @@
 #include "sensors/barometer.h"
 #include "sensors/compass.h"
 #include "sensors/gyro.h"
+<<<<<<< HEAD
 
 #include "flight/mixer.h"
+=======
+>>>>>>> betaflight/master
 #include "flight/pid.h"
 
 #include "drivers/pwm_output.h"
+<<<<<<< HEAD
 
 =======
 #include "fc/config.h"
@@ -63,6 +67,10 @@
 #include "flight/pid.h"
 #include "drivers/pwm_output.h"
 >>>>>>> betaflight/4.0.x-maintenance
+=======
+#include "pg/motor.h"
+
+>>>>>>> betaflight/master
 static targetSerialPortFunction_t targetSerialPortFunction[] = {
     { SERIAL_PORT_USART1, FUNCTION_RX_SERIAL },
     { SERIAL_PORT_USART3,  FUNCTION_VTX_SMARTAUDIO },
